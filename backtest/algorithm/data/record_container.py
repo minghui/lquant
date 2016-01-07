@@ -15,10 +15,11 @@ class RecordContainer(object):
 
     def add_record(self, record):
         if self._stock_records.__contains__(record.name):
-            print 'go here'
-            self._stock_records[record.name] += record
+            if record.buy == True:
+                self._stock_records[record.name] += record
+            else:
+                self._stock_records[record.name] -= record
         else:
-            print 'go here 1'
             self._stock_records.update({record.name: record})
 
     def get_record(self, name):
@@ -30,12 +31,21 @@ class RecordContainer(object):
         """
         return self._stock_records.keys()
 
-    def get_stock_money(self):
+    def get_stock_cost_money(self):
         """
         :return: float
         """
         tmp = [x.price*x.number for x in self._stock_records.values()]
         return np.sum(tmp)
+
+    def sync(self):
+        """
+        Update the stock asset, stock number is zero will be delete
+        :return:
+        """
+        for x in self._stock_records:
+            if self._stock_records[x].number == 0:
+                del self._stock_records[x]
 
 
 if __name__ == '__main__':

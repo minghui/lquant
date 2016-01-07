@@ -4,6 +4,18 @@
 class Record(object):
 
     def __init__(self, name=None, price=None, number=None, tax=0, date=None, buy=False, sell=False, **kwargs):
+        """
+        This is the record class which is used to save the record of every buy or sell event.
+        :param name:
+        :param price: This is the cost price.
+        :param number: stock number
+        :param tax:
+        :param date:
+        :param buy:
+        :param sell:
+        :param kwargs:
+        :return:
+        """
         self.name = name
         self.price = price
         self.tax = tax
@@ -18,12 +30,8 @@ class Record(object):
             raise ValueError('Must a Record class')
         if self.name == record.name:
             # FIXME: This is bullshit.
-            # self.price = (self.number*self.price+self.tax+record.tax+record.number*record.price)/(self.number+record.number)
-            # self.number += record.number
             price = (self.number*self.price+self.tax+record.tax+record.number*record.price)/(self.number+record.number)
             number = self.number + record.number
-            print 'This is the price:', price
-            print 'This is the number: ', number
             # FIXME: Should not return self, but a new record. Here should change.
             return Record(name=self.name, price=price, tax=self.tax, number=number, date=self.date, buy=self.buy,
                           sell=self.buy)

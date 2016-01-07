@@ -6,7 +6,9 @@ insert the stock data to the mysql
 """
 import MySQLdb
 import numpy as np
+import pandas as pd
 import datetime
+from .dbbase import DBBase
 
 
 def rec_sql(data, headers=None):
@@ -19,12 +21,15 @@ def rec_sql(data, headers=None):
     return data
 
 
-class DBUtil(object):
+class DBUtil(DBBase):
     """
     This class is used to get data from mysql database, maybe I show use sqlachemy instead.
     """
 
     def __init__(self, user, passwd, dbname):
+        DBBase.__init__(self)
+        if '_column_name' in dir(self):
+            print 'here'
         self.user = user
         self.passwd = passwd
         self.dbname = dbname
@@ -69,7 +74,6 @@ class DBUtil(object):
         self.db.commit()
         for row in self.cur.fetchall():
             result.append(row)
-        result = np.array(result)
         return result
 
     def select_data(self, id, begin=None, end=None):
@@ -87,6 +91,14 @@ class DBUtil(object):
 
     def get_cur(self):
         return self.cur
+
+    def get_array(self, id, begin=None, end=None):
+        result = self.select_data(id, begin=begin, end=end)
+        return np.array(result)
+
+    def get_dataframe(self, id, begin=None, end=None):
+        result = self.select_data(id, begin=begin, end=end)
+        return pd.DataFrame(data=result, columns=self._column_name)
 
 
 if __name__ == '__main__':

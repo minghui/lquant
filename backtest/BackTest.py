@@ -7,6 +7,8 @@ from utils.dbutils import DBUtil
 import codecs
 from algorithm import StrategyBase
 from __init__ import *
+from algorithm.data.record import Record
+from algorithm.data.record_container import RecordContainer
 
 
 class BackTestBase(object):
@@ -35,6 +37,7 @@ class BackTestBase(object):
         self._database = DBUtil(config['user'], str(config['passwd']), config['database'])
         self._summary = {}
         self._strategy = None
+        self.stock_asset = RecordContainer()
 
     def set_strategy(self, strategy):
         self._strategy = strategy
@@ -44,8 +47,32 @@ class BackTestBase(object):
             raise ValueError("Do not have a strategy")
         for stock in self._backtest_list:
             self._strategy.init(self._fund)
-            stock_data = self._database.select_data(stock, self._begin_date, self._end_date)
+            stock_data = self._database.get_array(stock, self._begin_date, self._end_date)
             self._test_strategy(stock, stock_data)
+
+    def buy_strategy(self, name, data):
+        """
+        Here is just a sample buy strategy.
+        :param data:
+        :return:
+        """
+        number = np.floor(self._fund/(data[4]*100))
+        if number != 0:
+            record = Record(name=name, date=data[1], number=number, price=data[4], tax=0, buy=True)
+            self.stock_asset.add_record(record)
+            return record
+
+    def sell_strategy(self, name, data):
+        """
+        Here is just a sample sell strategy.
+        # TODO: Sell strategy should be configable.
+        :param data:
+        :return:
+        """
+        record = self.stock_asset.get_record(name)
+        sell_record = Record(name=name, price=data[4], number=record.number, tax=0, sell=True)
+        self.stock_asset.add_record(sell_record)
+        self._sell_record_list.append(sell_record)
 
     def _test_strategy(self, stock, stock_data):
         needed_data_length = self._strategy.get_data_need()
@@ -53,10 +80,7 @@ class BackTestBase(object):
             tmp_data = stock_data[(i-needed_data_length):i]
             if_buy = self._strategy.if_buy(tmp_data[-1])
             if if_buy:
-                record = self._strategy.buy(stock, tmp_data[-1])
-                if 1:
-                    print record
-                self._buy_record_list.append(record)
+                record = self.buy_strategy(stock, tmp_data[-1])
                 continue
             if_sell = self._sell_strategy.if_sell(tmp_data[-1])
             if if_sell:
