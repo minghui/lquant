@@ -38,20 +38,6 @@ class StrategyBase(object):
         """
         pass
 
-    @abstractmethod
-    def buy(self, *argv, **kwargs):
-        """
-        A strategy much contain buy strategy.
-        return a record of buy.
-        """
-        pass
-
-    @abstractmethod
-    def sell(self, *argv, **kwargs):
-        """
-        return a record of sell.
-        """
-        pass
 
     @abstractmethod
     def if_sell(self, *argv, **kwargs):

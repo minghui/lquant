@@ -60,12 +60,13 @@ class Record(object):
 
     def __repr__(self):
         if self.buy:
-            return 'This is the buy record, price is: %s, number is: %s' % (self.price, self.number)
+            return 'This is the buy record, cost price is: %s, number is: %s, date is: %s' % (self.price, self.number,
+                                                                                              self.date)
         elif self.sell:
-            return 'This is the sell record, price is: %s, number is: %s' % (self.price, self.number)
+            return 'This is the sell record, cost price is: %s, number is: %s, date is: %s' % (self.price, self.number,
+                                                                                               self.date)
         else:
             return 'Do not have record'
-
 
 
 if __name__ == '__main__':

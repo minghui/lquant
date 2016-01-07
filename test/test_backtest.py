@@ -27,3 +27,4 @@ if __name__ == '__main__':
     test_strategy.set_data_need(1)
     test_case.set_strategy(test_strategy)
     test_case.test_strategy()
+    test_case.summary()

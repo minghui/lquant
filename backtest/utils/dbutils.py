@@ -28,8 +28,6 @@ class DBUtil(DBBase):
 
     def __init__(self, user, passwd, dbname):
         DBBase.__init__(self)
-        if '_column_name' in dir(self):
-            print 'here'
         self.user = user
         self.passwd = passwd
         self.dbname = dbname
