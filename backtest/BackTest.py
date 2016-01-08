@@ -35,6 +35,9 @@ class BackTestBase(object):
         self._base_fund = self._fund
         self._begin_date = config['begin']
         self._end_date = config['end']
+        # Compare with
+        self._benchmark_name = config['benchmark']
+        self._benchmark_data = None
         # Use database to store data.
 
         self._database = DBUtil(config['user'], str(config['passwd']), config['database'])
@@ -45,6 +48,7 @@ class BackTestBase(object):
         # Use to save the everydays return and loss
         self.asset_dict = {}
         self.asset_daliy = []
+
 
     def buy_strategy(self, name, data):
         """
@@ -112,7 +116,11 @@ class BackTestBase(object):
     def summary(self):
         print self.asset_dict
         for x in self.asset_dict:
-            self.asset_dict[x].plot()
+            self.get_benchmark()
+            asset_return = (self.asset_dict[x]-self._base_fund)/self._base_fund
+            asset_return = asset_return.add_prefix(x+"_")
+            result = pd.merge(asset_return, self._benchmark_data, left_index=True, right_index=True, how="inner")
+            result.plot()
             plt.show()
         print self._buy_record_list
         print self._sell_record_list
@@ -128,23 +136,37 @@ class BackTestBase(object):
         self.asset_daliy.append(current_asset)
 
     def _init_assert(self):
+        """
+        Init the asset.
+        """
         self.stock_asset.clear()
         self._fund = self._base_fund
         self._strategy.init(self._fund)
         self.asset_daliy = []
 
     def get_benchmark(self):
-        pass
+        """
+        Get the benchmark. Used to compare with strategy.
+        """
+        benchmark_data = self._database.get_array(self._benchmark_name, self._begin_date, self._end_date)
+        date_index = benchmark_data[1:, 1]
+        benchmark_data = benchmark_data[:, 4]
+        change_rate = (benchmark_data[1:] - benchmark_data[0])/benchmark_data[0]
+        self._benchmark_data = pd.DataFrame(data=change_rate, index=date_index, columns=["benchmark"])
 
 
 class BuyStrategy(object):
-
+    """
+    This is t he buy strategy base class.
+    """
     def buy_strategy(self, *args, **kwargs):
         pass
 
 
 class SellStrategy(object):
-
+    """
+    This is the sell strategy base class.
+    """
     def sell_strategy(self, *args, **kwargs):
         pass
 

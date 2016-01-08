@@ -5,3 +5,4 @@ database: test
 fund: 100000
 begin: 2015-10-11
 end: 2015-12-12
+benchmark: sh600000
