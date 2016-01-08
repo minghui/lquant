@@ -48,7 +48,11 @@ class BackTestBase(object):
         # Use to save the everydays return and loss
         self.asset_dict = {}
         self.asset_daliy = []
+        self._analysis = None
 
+    def init(self, strategy=None, analysis=None):
+        self._strategy = strategy
+        self._analysis = analysis
 
     def buy_strategy(self, name, data):
         """
