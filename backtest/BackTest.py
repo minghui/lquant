@@ -44,6 +44,7 @@ class BackTestBase(object):
         self.stock_asset = RecordContainer()
         # Use to save the everydays return and loss
         self.asset_dict = {}
+        self.asset_daliy = []
 
     def buy_strategy(self, name, data):
         """
@@ -52,6 +53,7 @@ class BackTestBase(object):
         :return:
         """
         number = np.floor(self._fund/(data[4]*100))
+        self._fund -= data[4]*number*100
         if number != 0:
             record = Record(name=name, date=data[1],
                             number=number, price=data[4], tax=0, buy=True)
@@ -68,7 +70,7 @@ class BackTestBase(object):
         record = self.stock_asset.get_record(name)
         sell_record = Record(name=name, date=data[1],
                              price=data[4], number=record.number, tax=0, sell=True)
-        self._fund += record.number*data[4]
+        self._fund += record.number*data[4]*100
         self.stock_asset.add_record(sell_record)
         self._sell_record_list.append(sell_record)
 
@@ -79,9 +81,7 @@ class BackTestBase(object):
         if self._strategy is None:
             raise ValueError("Do not have a strategy")
         for stock in self._backtest_list:
-            self.stock_asset.clear()
-            self._fund = self._base_fund
-            self._strategy.init(self._fund)
+            self._init_assert()
             stock_data = self._database.get_array(stock, self._begin_date, self._end_date)
 
             self._test_strategy(stock, stock_data)
@@ -94,16 +94,18 @@ class BackTestBase(object):
             if_buy = self._strategy.if_buy(tmp_data[-1])
             if if_buy:
                 record = self.buy_strategy(stock, tmp_data[-1])
-                self._buy_record_list.append(record)
+                if record is not None:
+                    self._buy_record_list.append(record)
+                    self.get_assert(stock, tmp_data[-1])
+                    continue
             if_sell = self._strategy.if_sell(tmp_data[-1])
             if if_sell:
                 record = self.sell_strategy(stock, tmp_data[-1])
-                self._sell_record_list.append(record)
-            record = self.stock_asset.get_record(stock)
-            current_asset = self._fund + record.number*tmp_data[-1, 4]
-            asset_daliy.append(current_asset)
+                if record is not None:
+                    self._sell_record_list.append(record)
+            self.get_assert(stock, tmp_data[-1])
         date_index = stock_data[needed_data_length:, 1]
-        result = pd.DataFrame(data=asset_daliy, index=date_index)
+        result = pd.DataFrame(data=self.asset_daliy, index=date_index, columns=["return"])
         self._summary[stock] = self._strategy.summary()
         self.asset_dict.update({stock: result})
 
@@ -120,6 +122,31 @@ class BackTestBase(object):
         pass
         # recordself.stock_asset.get_record(stock)
 
+    def get_assert(self, stock, data):
+        record = self.stock_asset.get_record(stock)
+        current_asset = self._fund + record.number*data[4]*100
+        self.asset_daliy.append(current_asset)
+
+    def _init_assert(self):
+        self.stock_asset.clear()
+        self._fund = self._base_fund
+        self._strategy.init(self._fund)
+        self.asset_daliy = []
+
+    def get_benchmark(self):
+        pass
+
+
+class BuyStrategy(object):
+
+    def buy_strategy(self, *args, **kwargs):
+        pass
+
+
+class SellStrategy(object):
+
+    def sell_strategy(self, *args, **kwargs):
+        pass
 
 if __name__ == '__main__':
     import yaml
