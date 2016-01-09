@@ -34,9 +34,7 @@ from . risk import (
     sortino_ratio,
 )
 
-from zipline.utils.serialization_utils import (
-    VERSION_LABEL
-)
+from .__init__ import VERSION_LABEL
 
 log = logbook.Logger('Risk Period')
 

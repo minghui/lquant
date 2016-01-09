@@ -23,3 +23,5 @@ __all__ = [
     'RiskMetricsPeriod',
     'RiskMetricsCumulative',
 ]
+
+VERSION_LABEL = '_stateversion_'

@@ -67,7 +67,7 @@ import numpy as np
 import pandas as pd
 from pandas.tseries.tools import normalize_date
 
-import zipline.finance.risk as risk
+import backtest.finance.risk as risk
 from . period import PerformancePeriod
 
 from zipline.utils.serialization_utils import (

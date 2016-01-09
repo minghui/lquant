@@ -61,12 +61,8 @@ import logbook
 import datetime
 from dateutil.relativedelta import relativedelta
 from six import iteritems
-
+from .__init__ import VERSION_LABEL
 from . period import RiskMetricsPeriod
-
-from zipline.utils.serialization_utils import (
-    VERSION_LABEL
-)
 
 log = logbook.Logger('Risk Report')
 
