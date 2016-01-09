@@ -23,10 +23,9 @@ class DBBase(object):
         self._column_name - column_name
 
     @abstractmethod
-    def get_dataframe(self, id, begin=None, end=None):
+    def get_dataframe(self, id, begin=None, end=None, **kwargs):
         pass
 
     @abstractmethod
-    def get_array(self, id, begin=None, end=None):
+    def get_array(self, id, begin=None, end=None, **kwargs):
         pass
-

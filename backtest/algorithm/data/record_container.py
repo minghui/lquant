@@ -24,7 +24,9 @@ class RecordContainer(object):
         self._sync()
 
     def get_record(self, name):
-        return self._stock_records[name]
+        if name in self._stock_records:
+            return self._stock_records[name]
+        return None
 
     def get_stock_list(self):
         """

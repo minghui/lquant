@@ -88,9 +88,7 @@ from six import itervalues, iteritems
 
 import zipline.protocol as zp
 
-from zipline.utils.serialization_utils import (
-    VERSION_LABEL
-)
+from backtest.finance.risk.__init__ import VERSION_LABEL
 
 log = logbook.Logger('Performance')
 TRADE_TYPE = zp.DATASOURCE_TYPE.TRADE
