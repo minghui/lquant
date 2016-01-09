@@ -12,6 +12,7 @@ from algorithm.data.record_container import RecordContainer
 import pandas as pd
 from matplotlib import pylab as plt
 from backtest.utils.rds import RDSDB
+from datetime import datetime
 
 DATA_NEED = {
     "minute": 242,
@@ -54,7 +55,9 @@ class BackTestBase(object):
                                         database_config['database'])
         elif database_config['name'] == 'rds':
             self._database = RDSDB(self.logger)
-            self._db_type = database_config['type']
+        else:
+            raise ValueError("Do not support data source")
+        self._db_type = database_config['type']
         self._summary = {}
         self._strategy = None
         # Use to save the everydays return and loss
@@ -65,13 +68,11 @@ class BackTestBase(object):
 
     def init(self, strategy=None, trade_strategy=None, analysis=None):
         self._strategy = strategy
-        self._strategy.set_data_need(DATA_NEED[self._db_type])
         self._analysis = analysis
         self._trade_strategy = trade_strategy
 
     def set_strategy(self, strategy):
         self._strategy = strategy
-        self._strategy.set_data_need(DATA_NEED[self._db_type])
 
     def test_strategy(self):
         if self._strategy is None:
@@ -120,24 +121,12 @@ class BackTestBase(object):
     def get_benchmark(self):
         """
         Get the benchmark. Used to compare with strategy.
-        # """
-        # if self._db_type == 'minute':
-        #     benchmark_data = self._database.get_array(self._benchmark_name,
-        #                                               self._begin_date,
-        #                                               self._end_date,
-        #                                               m=1)
-        # elif self._db_type == 'day':
+        """
+
         benchmark_data = self._database.get_array(self._benchmark_name,
                                                   self._begin_date,
                                                   self._end_date,
                                                   m=1440)
-        # elif self._db_type == '5minute':
-        #     benchmark_data = self._database.get_array(self._benchmark_name,
-        #                                               self._begin_date,
-        #                                               self._end_date,
-        #                                               m=5)
-        # else:
-        #     raise ValueError("Do not support type")
 
         date_index = np.array([x.split(' ')[0] for x in benchmark_data[1:, 0]])
         benchmark_data = benchmark_data[:, 4]
@@ -174,10 +163,10 @@ class BackTestBase(object):
                 if record is not None:
                     self._sell_record_list.append(record)
             self._trade_strategy.get_assert(stock, tmp_data[-1])
-        print 'This is stock data', stock_data
-        date_index = [x[0] for x in stock_data]
-        print stock_data
-        print date_index
+        # print 'This is stock data', stock_data
+        date_index = [x[0][0].split(" ")[0] for x in stock_data]
+        # print stock_data
+        # print 'This is date index', date_index
         result = pd.DataFrame(data=self._trade_strategy.asset_daliy,
                               index=date_index,
                               columns=["return"])

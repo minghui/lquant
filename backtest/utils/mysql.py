@@ -90,7 +90,7 @@ class MySQLUtils(DBBase):
     def get_cur(self):
         return self.cur
 
-    def get_array(self, id, begin=None, end=None):
+    def get_array(self, id, begin=None, end=None, **kwargs):
         result = self.select_data(id, begin=begin, end=end)
         return np.array(result)
 
@@ -102,6 +102,10 @@ class MySQLUtils(DBBase):
         result = self.select_data(id, begin=begin, end=end)
         result = OHLCVD(result)
         return result
+
+    def get_daliy_array(self, id, begin=None, end=None):
+        result = self.select_data(id, begin=begin, end=end)
+
 
 if __name__ == '__main__':
     stock_db = MySQLUtils('root', '1988', 'test')

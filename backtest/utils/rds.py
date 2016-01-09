@@ -98,7 +98,6 @@ class RDSDB(DBBase):
         return self.result
 
 
-
 if __name__ == "__main__":
     import os
     import logging
