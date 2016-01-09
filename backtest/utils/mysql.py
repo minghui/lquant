@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import datetime
 from .dbbase import DBBase
-
+from .ohlc import OHLCVD
 
 def rec_sql(data, headers=None):
     if headers == None:
@@ -21,7 +21,7 @@ def rec_sql(data, headers=None):
     return data
 
 
-class DBUtil(DBBase):
+class MySQLUtils(DBBase):
     """
     This class is used to get data from mysql database, maybe I show use sqlachemy instead.
     """
@@ -74,16 +74,16 @@ class DBUtil(DBBase):
             result.append(row)
         return result
 
-    def select_data(self, id, begin=None, end=None):
+    def select_data(self, id, begin=None, end=None, source="STOCK"):
         '''
         begin is the begin time of the stock
         end is the end time of the stock
         '''
         if begin is None:
-            sql_line = '''select * from STOCK where ID = '{id}' '''.format(id=id)
+            sql_line = '''select DD, OPEN, HIGH, LOW, CLOSE, VOLUME, DEAL from {source} where ID = '{id}' '''.format(id=id, source=source)
         else:
-            sql_line = """select * from STOCK where ID = '{id}' and
- DD >= '{begin}' and DD <= '{end}' """.format(id=id, begin=begin, end=end)
+            sql_line = """select DD, OPEN, HIGH, LOW, CLOSE, VOLUME, DEAL from {source} where ID = '{id}' and
+ DD >= '{begin}' and DD <= '{end}' """.format(id=id, begin=begin, end=end, source=source)
         print sql_line
         return self.execute_sql(sql_line)
 
@@ -98,9 +98,13 @@ class DBUtil(DBBase):
         result = self.select_data(id, begin=begin, end=end)
         return pd.DataFrame(data=result, columns=self._column_name)
 
+    def get_ohlc(self, id, begin=None, end=None):
+        result = self.select_data(id, begin=begin, end=end)
+        result = OHLCVD(result)
+        return result
 
 if __name__ == '__main__':
-    stock_db = DBUtil('root', '1988', 'test')
+    stock_db = MySQLUtils('root', '1988', 'test')
     result = stock_db.select_data('sh600741', begin='2015-10-10', end='2015-11-11')
     print result
     #stock_name = stock_list('e:/stock-10-16/')

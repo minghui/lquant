@@ -3,7 +3,7 @@ import numpy as np
 from report import *
 import logbook
 import yaml
-from utils.dbutils import DBUtil
+from utils.mysql import MySQLUtils
 import codecs
 from algorithm import StrategyBase
 from __init__ import *
@@ -40,7 +40,7 @@ class BackTestBase(object):
         self._benchmark_data = None
         # Use database to store data.
 
-        self._database = DBUtil(config['user'], str(config['passwd']), config['database'])
+        self._database = MySQLUtils(config['user'], str(config['passwd']), config['database'])
         self._summary = {}
         self._strategy = None
         # for every stock we have a container
