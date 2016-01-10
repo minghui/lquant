@@ -179,8 +179,10 @@ class BackTestBase(object):
         day_data = self._database.get_array(stock, begin=begin, end=end, m=1440)
         day_data = day_data[:, 4]
         max_loc = np.argmax(day_data)
-        min_loc = np.argmin(day_data[max_loc:])
-        max_return = (day_data[max_loc] - day_data[min_loc])/day_data[min_loc] * 100
+        after_data = day_data[max_loc:]
+        min_loc = np.argmin(after_data)
+        min_price = after_data[min_loc]
+        max_return = (day_data[max_loc] - min_price)/day_data[min_loc] * 100
         return max_return
 
     def _init_assert(self):
