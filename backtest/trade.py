@@ -38,7 +38,9 @@ class TradeStrategy(object):
             record = Record(name=name, date=date,
                             number=number, price=price, tax=0, buy=True)
             self.stock_asset.add_record(record)
-            return record
+            self._buy_record_list.append(record)
+            return True
+        return False
 
     def sell_strategy(self, *args, **kwargs):
 
@@ -46,7 +48,7 @@ class TradeStrategy(object):
         Here is just a sample sell strategy.
         # TODO: Sell strategy should be configable.
         :param data:
-        :return:
+        :return: True or False
         """
         name = kwargs.get('name')
         price = kwargs.get("price")
@@ -56,18 +58,21 @@ class TradeStrategy(object):
             sell_record = Record(name=name, date=date,
                                  price=price, number=record.number,
                                  tax=0, sell=True)
+            print 'This is the sell record:', sell_record
             self._fund += record.number * price * 100
             self.stock_asset.add_record(sell_record)
             self._sell_record_list.append(sell_record)
+            return True
+        return False
 
     def get_assert(self, stock, data):
         record = self.stock_asset.get_record(stock)
-        print record
         if record is not None:
             current_asset = self._fund + record.number * data[4] * 100
         else:
             current_asset = self._fund
-        print 'stock', current_asset
+        print record
+        print 'current stock:', current_asset, 'current fund: ', self._fund
         self.asset_daliy.append(current_asset)
 
     def get_asset_daliy(self):

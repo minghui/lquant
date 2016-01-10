@@ -13,13 +13,13 @@ class mystrategy(StrategyBase):
         StrategyBase.__init__(self)
 
     def if_buy(self, data):
-        # print 'In if buy', data
+        # print 'In if buy',
         if data[-1, 4] > 10:
-            return data[-1, 4]
+            return data[-1, 4], data[-1, 0]
 
     def if_sell(self, data):
         if data[-1, 4] > 15:
-            return data[-1, 4]
+            return data[-1, 4], data[-1, 0]
         return None
 
 if __name__ == '__main__':

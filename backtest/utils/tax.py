@@ -19,3 +19,17 @@ def sz_tax(price, number):
     :return:
     """
     return price*number*0.0005 + 5
+
+
+def buy_tax(price, number, market):
+    """
+    Calculate tax.
+    :param price:
+    :param number:
+    :param market:
+    :return:
+    """
+    if market == 'sh':
+        return sh_tax(price, number)
+    else:
+        return sz_tax(price, number)

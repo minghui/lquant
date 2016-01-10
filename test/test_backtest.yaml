@@ -1,4 +1,5 @@
-test_list: [600741, 601668]
+test_list: [600741]
+date_type: "%Y%m%d"
 database:
   name: rds
 query_type: minute
@@ -6,6 +7,14 @@ need_data_length: 1days
 trade_strategy:
   parameters: None
 fund: 100000
-begin: 20151010
+begin: 20150101
 end: 20160106
 benchmark: 600000
+
+#
+#database:
+#  name: mysql
+#  user: root
+#  passwd: '1988'
+#  database: test
+#  source: stock

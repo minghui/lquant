@@ -34,9 +34,12 @@ class StrategyBase(object):
     @abstractmethod
     def if_buy(self, *argv, **kwargs):
         """
-        A strategy much contain buy strategy.
+        Check if buy stock.
+        :param argv:
+        :param kwargs:
+        :return: first is price, second is date
         """
-        pass
+        return None, None
 
 
     @abstractmethod
@@ -45,9 +48,9 @@ class StrategyBase(object):
         Check if sell the stock.
         :param argv:
         :param kwargs:
-        :return:
+        :return: fist is price, second is date
         """
-        pass
+        return None, None
 
     @abstractmethod
     def summary(self, *argv, **kwargs):

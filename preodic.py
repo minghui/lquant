@@ -2,6 +2,7 @@
 
 from backtest.backtest_base import *
 from backtest.algorithm.data.record import Record
+from backtest.algorithm.StrategyBase import StrategyBase
 
 
 class PeriodicStrategy(StrategyBase):

@@ -8,8 +8,9 @@ import MySQLdb
 import numpy as np
 import pandas as pd
 import datetime
-from .dbbase import DBBase
-from .ohlc import OHLCVD
+from backtest.utils.dbbase import DBBase
+from backtest.utils.ohlc import OHLCVD
+
 
 def rec_sql(data, headers=None):
     if headers == None:
@@ -26,11 +27,12 @@ class MySQLUtils(DBBase):
     This class is used to get data from mysql database, maybe I show use sqlachemy instead.
     """
 
-    def __init__(self, user, passwd, dbname):
+    def __init__(self, user, passwd, dbname, source):
         DBBase.__init__(self)
         self.user = user
         self.passwd = passwd
         self.dbname = dbname
+        self.source = source
         self.db = MySQLdb.connect(user=self.user, passwd=self.passwd, db=self.dbname, charset='utf8')
         self.cur = self.db.cursor()
 
@@ -79,10 +81,18 @@ class MySQLUtils(DBBase):
         begin is the begin time of the stock
         end is the end time of the stock
         '''
+        if not isinstance(id, str):
+            id = str(id)
+        if not (id.startswith('sh') or id.startswith('sz')):
+            if id.startswith('6'):
+                id = 'sh' + id
+            else:
+                id = 'sz' + id
         if begin is None:
-            sql_line = '''select DD, OPEN, HIGH, LOW, CLOSE, VOLUME, DEAL from {source} where ID = '{id}' '''.format(id=id, source=source)
+            sql_line = '''select DD, START, HIGH, LOW, CLOSE, VOLUME, DEAL from {source} where ID = '{id}' '''.\
+                format(id=id, source=source)
         else:
-            sql_line = """select DD, OPEN, HIGH, LOW, CLOSE, VOLUME, DEAL from {source} where ID = '{id}' and
+            sql_line = """select DD, START, HIGH, LOW, CLOSE, VOLUME, DEAL from {source} where ID = '{id}' and
  DD >= '{begin}' and DD <= '{end}' """.format(id=id, begin=begin, end=end, source=source)
         print sql_line
         return self.execute_sql(sql_line)
@@ -103,14 +113,22 @@ class MySQLUtils(DBBase):
         result = OHLCVD(result)
         return result
 
-    def get_daliy_array(self, id, begin=None, end=None):
+    def get_daliy_array(self, id, begin=None, end=None, **kwargs):
         result = self.select_data(id, begin=begin, end=end)
 
+    def get_work_days(self, id, begin=None, end=None, **kwargs):
+        result = self.execute_sql("select DISTINCT dd from {source} where dd >='{begin}' and dd <= '{end}'".format(
+            source=self.source,
+            begin=begin,
+            end=end))
+        return result
 
 if __name__ == '__main__':
-    stock_db = MySQLUtils('root', '1988', 'test')
+    stock_db = MySQLUtils('root', '1988', 'test', 'stock')
     result = stock_db.select_data('sh600741', begin='2015-10-10', end='2015-11-11')
     print result
+    result_time = [str(x[0]) for x in result]
+    print result_time
     #stock_name = stock_list('e:/stock-10-16/')
     # stock_db.create_db('STOCK')
     # for root, _, files in os.walk('./data/'):

@@ -25,8 +25,8 @@ M_TYOE = {
     "day": 1440,
     "minute": 1,
     "5min": 240
-
 }
+
 
 class BackTestBase(object):
     '''
@@ -59,7 +59,8 @@ class BackTestBase(object):
         if database_config['name'] == 'mysql':
             self._database = MySQLUtils(database_config['user'],
                                         str(database_config['passwd']),
-                                        database_config['database'])
+                                        database_config['database'],
+                                        database_config['source'])
         elif database_config['name'] == 'rds':
             self._database = RDSDB(self.logger)
         else:
@@ -73,6 +74,7 @@ class BackTestBase(object):
         self.asset_daliy = []
         self._analysis = None
         self._trade_strategy = None
+        self._date_type = config['date_type']
 
     def init(self, strategy=None, trade_strategy=None, analysis=None):
         self._strategy = strategy
@@ -89,11 +91,11 @@ class BackTestBase(object):
             self._trade_strategy.init(self._fund)
             work_days = self._database.get_work_days(stock, begin=self._begin_date, end=self._end_date)
             for day in work_days:
-                day = datetime.strptime(str(day), '%Y%m%d')
+                day = datetime.strptime(str(day), self._date_type)
                 if self._need_data_length.endswith('days'):
                     data_len = int(self._need_data_length.split('days')[0])
-                    begin = datetime.strftime(day+timedelta(data_len-1), "%Y%m%d")
-                    end = datetime.strftime(day+timedelta(1), "%Y%m%d")
+                    begin = datetime.strftime(day+timedelta(data_len-1), self._date_type)
+                    end = datetime.strftime(day+timedelta(1), self._date_type)
                 else:
                     raise ValueError("Do not supoort data length")
                 m_type = M_TYOE[self._qury_type]
@@ -104,7 +106,7 @@ class BackTestBase(object):
             # print stock_data
             # print 'This is date index', date_index
             print self._trade_strategy.asset_daliy.__len__()
-            date_index = [datetime.strptime(str(x), "%Y%m%d") for x in work_days]
+            date_index = [datetime.strptime(str(x), self._date_type) for x in work_days]
             result = pd.DataFrame(data=self._trade_strategy.asset_daliy,
                                   index=date_index,
                                   columns=["return"])
@@ -157,19 +159,20 @@ class BackTestBase(object):
 
     def _test_strategy(self, stock, stock_data):
         # print 'This is the stock_data', stock_data
-        buy_price = self._strategy.if_buy(stock_data)
-        if buy_price is not None:
-            record = self._trade_strategy.buy_strategy(name=stock,
-                                                       price=buy_price)
-            if record is not None:
-                self._buy_record_list.append(record)
-        else:
-            sell_price = self._strategy.if_sell(stock_data)
-            if sell_price is not None:
-                record = self._trade_strategy.sell_strategy(name=stock,
-                                                            price=sell_price)
-                if record is not None:
-                    self._sell_record_list.append(record)
+        buy_detail = self._strategy.if_buy(stock_data)
+        if buy_detail is not None:
+            result =self._trade_strategy.buy_strategy(name=stock,
+                                                      price=buy_detail[0],
+                                                      date=buy_detail[1],
+                                                      buy=True)
+            if result:
+                return
+        sell_detail = self._strategy.if_sell(stock_data)
+        if sell_detail is not None:
+            self._trade_strategy.sell_strategy(name=stock,
+                                               price=sell_detail[0],
+                                               date=sell_detail[0],
+                                               sell=True)
 
 if __name__ == '__main__':
     import yaml

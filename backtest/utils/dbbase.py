@@ -29,3 +29,6 @@ class DBBase(object):
     @abstractmethod
     def get_array(self, id, begin=None, end=None, **kwargs):
         pass
+
+    def get_work_days(self, *argv, **kwargs):
+        pass

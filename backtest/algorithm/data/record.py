@@ -59,12 +59,11 @@ class Record(object):
             raise ValueError('Only same stock can sub.')
 
     def __repr__(self):
+        print_str = 'This is the buy record of %s , cost price is: %s, number is: %s, date is: %s'
         if self.buy:
-            return 'This is the buy record, cost price is: %s, number is: %s, date is: %s' % (self.price, self.number,
-                                                                                              self.date)
+            return print_str % (self.name, self.price, self.number, self.date)
         elif self.sell:
-            return 'This is the sell record, cost price is: %s, number is: %s, date is: %s' % (self.price, self.number,
-                                                                                               self.date)
+            return print_str % (self.name, self.price, self.number, self.date)
         else:
             return 'Do not have record'
 
