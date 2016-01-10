@@ -1,8 +1,11 @@
 test_list: [600741, 601668]
 database:
   name: rds
-  type: day
+query_type: minute
+need_data_length: 1days
+trade_strategy:
+  parameters: None
 fund: 100000
-begin: 20151214
-end: 20151230
+begin: 20151010
+end: 20160106
 benchmark: 600000

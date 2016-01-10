@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from backtest.BackTest import *
+from backtest.backtest_base import *
 from backtest.algorithm.data.record import Record
 
 

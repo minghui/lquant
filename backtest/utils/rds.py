@@ -97,6 +97,10 @@ class RDSDB(DBBase):
                 self.result.append(self.df.values)
         return self.result
 
+    def get_work_days(self, id, begin=None, end=None):
+        self.get_dataframe(id, start=begin, end=end, m=1440)
+        return self.get_sorted_uniq_date()
+
 
 if __name__ == "__main__":
     import os
@@ -120,7 +124,5 @@ if __name__ == "__main__":
     stock = RDSDB(logging)
     ex = "SH"
     code = "600476"
-    result = stock.get_daliy_array(code, begin='20151212', end='20151220',
-                                   m=1)
+    result = stock.get_work_days(code, begin='20151212', end='20151230')
     print result
-    print 'end'

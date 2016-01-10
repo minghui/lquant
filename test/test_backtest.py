@@ -2,10 +2,9 @@
 
 import numpy as np
 
-from backtest.BackTest import BackTestBase
+from backtest.backtest_base import BackTestBase
 from backtest.algorithm.StrategyBase import StrategyBase
-from backtest.algorithm.data.record import Record
-from backtest.BackTest import TradeStrategy
+from backtest.trade import TradeStrategy
 
 
 class mystrategy(StrategyBase):
