@@ -123,6 +123,6 @@ if __name__ == "__main__":
     logging.getLogger('').addHandler(console)
     stock = RDSDB(logging)
     ex = "SH"
-    code = "600476"
-    result = stock.get_work_days(code, begin='20151212', end='20151230')
-    print result
+    code = "600741"
+    result = stock.get_array(code, begin='20150101', end='20151220', m=1440)
+    print result[:, 4]

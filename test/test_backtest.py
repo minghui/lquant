@@ -22,6 +22,12 @@ class mystrategy(StrategyBase):
             return data[-1, 4], data[-1, 0]
         return None
 
+
+def analysis(context):
+    for x in context:
+        print context[x]
+
+
 if __name__ == '__main__':
     import logging
     import os
@@ -39,6 +45,5 @@ if __name__ == '__main__':
     test_case = BackTestBase(config_file='./test_backtest.yaml', log=logging)
     test_strategy = mystrategy()
     test_trade_strategy = TradeStrategy()
-    test_case.init(strategy=test_strategy, trade_strategy=test_trade_strategy)
+    test_case.init(strategy=test_strategy, trade_strategy=test_trade_strategy, analysis=analysis)
     test_case.test_strategy()
-    test_case.summary()

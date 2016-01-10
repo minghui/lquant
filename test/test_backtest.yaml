@@ -2,8 +2,9 @@ test_list: [600741]
 date_type: "%Y%m%d"
 database:
   name: rds
-query_type: minute
-need_data_length: 1days
+query_type: day
+need_data_length: 5days
+tax: 0.001
 trade_strategy:
   parameters: None
 fund: 100000

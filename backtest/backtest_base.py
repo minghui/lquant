@@ -75,8 +75,16 @@ class BackTestBase(object):
         self._analysis = None
         self._trade_strategy = None
         self._date_type = config['date_type']
+        self._tax = config["tax"]
 
     def init(self, strategy=None, trade_strategy=None, analysis=None):
+        """
+        Init the strategy , trade_strategy and analysis function.
+        :param strategy: Chceck if buy or is sell.
+        :param trade_strategy:  Buy or sell.
+        :param analysis:  Analysis the result.
+        :return:
+        """
         self._strategy = strategy
         self._analysis = analysis
         self._trade_strategy = trade_strategy
@@ -85,6 +93,11 @@ class BackTestBase(object):
         self._strategy = strategy
 
     def test_strategy(self):
+        """
+        This is the main function of the backtest.
+        Is used to start the backtest.
+        :return:
+        """
         if self._strategy is None or self._trade_strategy is None:
             raise ValueError("Do not have a strategy")
         for stock in self._backtest_list:
@@ -94,42 +107,47 @@ class BackTestBase(object):
                 day = datetime.strptime(str(day), self._date_type)
                 if self._need_data_length.endswith('days'):
                     data_len = int(self._need_data_length.split('days')[0])
-                    begin = datetime.strftime(day+timedelta(data_len-1), self._date_type)
+                    begin = datetime.strftime(day-timedelta(data_len-1), self._date_type)
                     end = datetime.strftime(day+timedelta(1), self._date_type)
                 else:
                     raise ValueError("Do not supoort data length")
                 m_type = M_TYOE[self._qury_type]
                 stock_data = self._database.get_array(stock, begin=begin, end=end, m=m_type)
                 self._test_strategy(stock, stock_data=stock_data)
-                self._trade_strategy.get_assert(stock, stock_data[-1])
+                self._trade_strategy.get_asset(stock, stock_data[-1])
                 # print 'This is stock data', stock_data
             # print stock_data
             # print 'This is date index', date_index
-            print self._trade_strategy.asset_daliy.__len__()
             date_index = [datetime.strptime(str(x), self._date_type) for x in work_days]
             result = pd.DataFrame(data=self._trade_strategy.asset_daliy,
                                   index=date_index,
                                   columns=["return"])
-            print result
             self._summary[stock] = self._strategy.summary()
             self.asset_dict.update({stock: result})
+        self.summary()
 
     def summary(self):
-        for x in self.asset_dict:
-            self.get_benchmark()
-            asset_return = (self.asset_dict[x] - self._base_fund) / self._base_fund
-            asset_return = asset_return.add_prefix(str(x) + "_")
-            print asset_return
-            result = pd.merge(asset_return, self._benchmark_data,
-                              left_index=True, right_index=True, how="inner")
-            # print result
-            if self._analysis is not None:
-                self._analysis(result)
-            result.plot()
-            plt.show()
-
-    def get_stock_asset(self):
-        pass
+        """
+        This function is used to summary the result.
+        If you want calculate some other indicator, you can add them here.
+        :return:
+        """
+        if self._analysis is not None:
+            self._analysis(self.asset_dict)
+        # for x in self.asset_dict:
+        #     self.get_benchmark()
+        #     asset_return = (self.asset_dict[x] - self._base_fund) / self._base_fund
+        #     asset_return = asset_return.add_prefix(str(x) + "_")
+        #     print asset_return
+        #     result = pd.merge(asset_return, self._benchmark_data,
+        #                       left_index=True, right_index=True, how="inner")
+        #     max_return = self.get_max_return(x, begin=self._begin_date, end=self._end_date)
+        #     print max_return
+        #     # print result
+        #     # if self._analysis is not None:
+        #     #     self._analysis(result)
+        #     # result.plot()
+        #     # plt.show()
 
     def get_benchmark(self):
         """
@@ -149,6 +167,17 @@ class BackTestBase(object):
                                             columns=["benchmark"])
         print self._benchmark_data
 
+    def get_max_return(self, stock, begin=None, end=None):
+        """
+        Calculate the max return.
+        """
+        day_data = self._database.get_array(stock, begin=begin, end=end, m=1440)
+        day_data = day_data[:, 4]
+        max_loc = np.argmax(day_data)
+        min_loc = np.argmin(day_data[max_loc:])
+        max_return = (day_data[max_loc] - day_data[min_loc])/day_data[min_loc] * 100
+        return max_return
+
     def _init_assert(self):
         """
         Init the asset.
@@ -158,26 +187,33 @@ class BackTestBase(object):
         self._trade_strategy.init(self._fund)
 
     def _test_strategy(self, stock, stock_data):
+        """
+        Test strategy.
+        :param stock:
+        :param stock_data:
+        :return:
+        """
         # print 'This is the stock_data', stock_data
         buy_detail = self._strategy.if_buy(stock_data)
         if buy_detail is not None:
-            result =self._trade_strategy.buy_strategy(name=stock,
-                                                      price=buy_detail[0],
-                                                      date=buy_detail[1],
-                                                      buy=True)
+            result = self._trade_strategy.buy_strategy(name=stock,
+                                                       price=buy_detail[0],
+                                                       date=buy_detail[1],
+                                                       tax=self._tax,
+                                                       buy=True)
             if result:
                 return
         sell_detail = self._strategy.if_sell(stock_data)
         if sell_detail is not None:
             self._trade_strategy.sell_strategy(name=stock,
                                                price=sell_detail[0],
-                                               date=sell_detail[0],
+                                               date=sell_detail[1],
+                                               tax=self._tax,
                                                sell=True)
 
 if __name__ == '__main__':
     import yaml
     import codecs
-
     with codecs.open('./test.yaml', encoding='utf-8') as f:
         data = yaml.load(f)
     print data

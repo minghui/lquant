@@ -1,24 +1,25 @@
 # coding=utf-8
+import numpy as np
 
 
-def sh_tax(price, number):
+def sh_tax(price, number, tax):
     """
     shanghai stock tax.
     :param price:
     :param number:
     :return:
     """
-    return price*number*0.01 + 5
+    return price*number*tax
 
 
-def sz_tax(price, number):
+def sz_tax(price, number, tax):
     """
     shenzhen stock tax.
     :param price:
     :param number:
     :return:
     """
-    return price*number*0.0005 + 5
+    return price*number*tax
 
 
 def buy_tax(price, number, market):
@@ -33,3 +34,8 @@ def buy_tax(price, number, market):
         return sh_tax(price, number)
     else:
         return sz_tax(price, number)
+
+def max_buy_number(fund, price, tax):
+    price = price + price*tax
+    number = np.floor(fund/(price*100))
+    return number
