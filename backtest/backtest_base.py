@@ -123,7 +123,12 @@ class BackTestBase(object):
                                   index=date_index,
                                   columns=["return"])
             self._summary[stock] = self._strategy.summary()
-            self.asset_dict.update({stock: result})
+            max_withdraw = self.get_max_withdraw(stock, begin=self._begin_date, end=self._end_date)
+            self.asset_dict.update({stock:
+                                        {
+                                            "return": result,
+                                            "max_retur": max_withdraw
+                                         }})
         self.summary()
 
     def summary(self):
@@ -167,7 +172,7 @@ class BackTestBase(object):
                                             columns=["benchmark"])
         print self._benchmark_data
 
-    def get_max_return(self, stock, begin=None, end=None):
+    def get_max_withdraw(self, stock, begin=None, end=None):
         """
         Calculate the max return.
         """
