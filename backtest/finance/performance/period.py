@@ -525,3 +525,6 @@ class PerformancePeriod(object):
         self._execution_cash_flow_multipliers = {}
 
         self.__dict__.update(state)
+
+if __name__ == '__main__':
+    pass
