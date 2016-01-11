@@ -92,6 +92,9 @@ class BackTestBase(object):
     def set_strategy(self, strategy):
         self._strategy = strategy
 
+    def set_trade_strategy(self, trade_strategy):
+        self._trade_strategy = trade_strategy
+
     def test_strategy(self):
         """
         This is the main function of the backtest.
@@ -127,7 +130,7 @@ class BackTestBase(object):
             self.asset_dict.update({stock:
                                         {
                                             "return": result,
-                                            "max_retur": max_withdraw
+                                            "max_withdraw": max_withdraw
                                          }})
         self.summary()
 
