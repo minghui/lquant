@@ -2,11 +2,12 @@ test_list: [600741]
 date_type: "%Y%m%d"
 database:
   name: rds
-query_type: day # minute
+query_type: day
 need_data_length: 5days
 tax: 0.001
+indicator: ["MACD", "SMA", "KDJ"]
 trade_strategy:
-  peroid: 5days # days minutes
+  parameters: None
 fund: 100000
 begin: 20150101
 end: 20160106

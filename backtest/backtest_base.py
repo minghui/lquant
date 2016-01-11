@@ -92,19 +92,16 @@ class BackTestBase(object):
     def set_strategy(self, strategy):
         self._strategy = strategy
 
-    def set_trade_strategy(self, trade_strategy):
-        self._trade_strategy = trade_strategy
-
     def test_strategy(self):
         """
         This is the main function of the backtest.
         Is used to start the backtest.
         :return:
         """
-        if self._strategy is None or self._trade_strategy is None:
+        if self._strategy is None:
             raise ValueError("Do not have a strategy")
         for stock in self._backtest_list:
-            self._trade_strategy.init(self._fund)
+            self._strategy.init(self._fund)
             work_days = self._database.get_work_days(stock, begin=self._begin_date, end=self._end_date)
             for day in work_days:
                 day = datetime.strptime(str(day), self._date_type)
@@ -117,12 +114,12 @@ class BackTestBase(object):
                 m_type = M_TYOE[self._qury_type]
                 stock_data = self._database.get_array(stock, begin=begin, end=end, m=m_type)
                 self._test_strategy(stock, stock_data=stock_data)
-                self._trade_strategy.get_asset(stock, stock_data[-1])
+                self._strategy.get_asset(stock, stock_data[-1])
                 # print 'This is stock data', stock_data
             # print stock_data
             # print 'This is date index', date_index
             date_index = [datetime.strptime(str(x), self._date_type) for x in work_days]
-            result = pd.DataFrame(data=self._trade_strategy.asset_daliy,
+            result = pd.DataFrame(data=self._strategy.asset_daliy,
                                   index=date_index,
                                   columns=["return"])
             self._summary[stock] = self._strategy.summary()
@@ -194,7 +191,6 @@ class BackTestBase(object):
         """
         self._fund = self._base_fund
         self._strategy.init(self._fund)
-        self._trade_strategy.init(self._fund)
 
     def _test_strategy(self, stock, stock_data):
         """
@@ -206,20 +202,20 @@ class BackTestBase(object):
         # print 'This is the stock_data', stock_data
         buy_detail = self._strategy.if_buy(stock_data)
         if buy_detail is not None:
-            result = self._trade_strategy.buy_strategy(name=stock,
-                                                       price=buy_detail[0],
-                                                       date=buy_detail[1],
-                                                       tax=self._tax,
-                                                       buy=True)
+            result = self._strategy.buy_strategy(name=stock,
+                                                 price=buy_detail[0],
+                                                 date=buy_detail[1],
+                                                 tax=self._tax,
+                                                 buy=True)
             if result:
                 return
         sell_detail = self._strategy.if_sell(stock_data)
         if sell_detail is not None:
-            self._trade_strategy.sell_strategy(name=stock,
-                                               price=sell_detail[0],
-                                               date=sell_detail[1],
-                                               tax=self._tax,
-                                               sell=True)
+            self._strategy.sell_strategy(name=stock,
+                                         price=sell_detail[0],
+                                         date=sell_detail[1],
+                                         tax=self._tax,
+                                         sell=True)
 
 if __name__ == '__main__':
     import yaml

@@ -19,7 +19,7 @@ from sys import float_info
 
 from six import with_metaclass
 
-import zipline.utils.math_utils as zp_math
+import backtest.utils.math_utils as zp_math
 
 from numpy import isfinite
 

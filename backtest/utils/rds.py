@@ -21,7 +21,8 @@ class RDSDB(DBBase):
     def store(self, fileName):
         self.df.to_csv(fileName, encoding='utf-8', index=False)
 
-    def get_dataframe(self, code="600000", start=20150101, end=20150130, m=1440):
+    def get_dataframe(self, code="600000", start=20150101, end=20150130,
+                      m=1440):
         self.df = None
         self.code = code
         requestURL = self.format % (self.ip, self.port, code, "", start, end, m)

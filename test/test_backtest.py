@@ -4,7 +4,6 @@ import numpy as np
 
 from backtest.backtest_base import BackTestBase
 from backtest.algorithm.StrategyBase import StrategyBase
-from backtest.trade import TradeStrategy
 
 
 class mystrategy(StrategyBase):
@@ -28,6 +27,19 @@ def analysis(context):
         print context[x]
 
 
+class CountStrategy(StrategyBase):
+
+    def __init__(self):
+        StrategyBase.__init__(self)
+
+    def if_buy(self, data):
+        down = data[1:, 4] - data[:-1, 4]
+        if np.sum(down<0) > data.shape[0]-1:
+            return data[-1, 4], data[-1, 0]
+
+    def if_sell(self, data):
+        pass
+
 if __name__ == '__main__':
     import logging
     import os
@@ -44,6 +56,5 @@ if __name__ == '__main__':
     logging.getLogger('').addHandler(console)
     test_case = BackTestBase(config_file='./test_backtest.yaml', log=logging)
     test_strategy = mystrategy()
-    test_trade_strategy = TradeStrategy()
-    test_case.init(strategy=test_strategy, trade_strategy=test_trade_strategy, analysis=analysis)
+    test_case.init(strategy=test_strategy, analysis=analysis)
     test_case.test_strategy()

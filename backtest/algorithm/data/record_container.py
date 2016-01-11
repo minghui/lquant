@@ -2,6 +2,7 @@
 
 import numpy as np
 from record import Record
+from backtest.utils.tax import *
 
 
 class RecordContainer(object):

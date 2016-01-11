@@ -3,7 +3,8 @@
 
 class Record(object):
 
-    def __init__(self, name=None, price=None, number=None, tax=0, date=None, buy=False, sell=False, **kwargs):
+    def __init__(self, name=None, price=None, number=None, tax=0, date=None,
+                 buy=False, sell=False, **kwargs):
         """
         This is the record class which is used to save the record of every buy or sell event.
         :param name:
@@ -30,10 +31,12 @@ class Record(object):
             raise ValueError('Must a Record class')
         if self.name == record.name:
             # FIXME: This is bullshit.
-            price = (self.number*self.price+self.tax+record.tax+record.number*record.price)/(self.number+record.number)
+            price = (self.number*self.price+self.tax+record.tax+
+                     record.number*record.price)/(self.number+record.number)
             number = self.number + record.number
             # FIXME: Should not return self, but a new record. Here should change.
-            return Record(name=self.name, price=price, tax=self.tax, number=number, date=self.date, buy=self.buy,
+            return Record(name=self.name, price=price, tax=self.tax,
+                          number=number, date=self.date, buy=self.buy,
                           sell=self.buy)
         else:
             raise ValueError('Only same stock can add.')
@@ -44,7 +47,8 @@ class Record(object):
         if self.name == record.name:
             if self.number < record.number:
                 raise ValueError('Can not sell more stock than have.')
-            return_value = (record.number*record.price-record.tax)-(record.number*self.price)
+            return_value = (record.number*record.price-record.tax) - \
+                           (record.number*self.price)
             # self.number -= record.number
             number = self.number - record.number
             if self.number != 0:
@@ -53,18 +57,23 @@ class Record(object):
             else:
                 # self.price = -return_value/record.number
                 price = -return_value/record.number
-            return Record(name=self.name, price=price, number=number, tax=self.tax, date=self.date, buy=self.buy,
+            return Record(name=self.name, price=price, number=number,
+                          tax=self.tax, date=self.date, buy=self.buy,
                           sell=self.buy)
         else:
             raise ValueError('Only same stock can sub.')
 
     def __repr__(self):
-        buy_print_str = 'This is the buy record of %s , cost price is: %s, number is: %s, date is: %s'
-        sell_print_str = 'This is the sell record of %s , cost price is: %s, number is: %s, date is: %s'
+        buy_print_str = '''This is the buy record of %s , cost price is: %s,
+        number is: %s, date is: %s'''
+        sell_print_str = '''This is the sell record of %s , cost price is: %s,
+        number is: %s, date is: %s'''
         if self.buy:
-            return buy_print_str % (self.name, self.price, self.number, self.date)
+            return buy_print_str % (self.name, self.price, self.number,
+                                    self.date)
         elif self.sell:
-            return sell_print_str % (self.name, self.price, self.number, self.date)
+            return sell_print_str % (self.name, self.price, self.number,
+                                     self.date)
         else:
             return 'Do not have record'
 

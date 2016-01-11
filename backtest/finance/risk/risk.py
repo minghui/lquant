@@ -62,7 +62,7 @@ import logbook
 import math
 import numpy as np
 
-import zipline.utils.math_utils as zp_math
+import backtest.utils.math_utils as zp_math
 
 log = logbook.Logger('Risk')
 

@@ -18,7 +18,7 @@ import logbook
 import math
 import numpy as np
 
-import zipline.utils.math_utils as zp_math
+import backtest.utils.math_utils as zp_math
 
 import pandas as pd
 from pandas.tseries.tools import normalize_date
@@ -34,9 +34,7 @@ from . risk import (
     sortino_ratio,
 )
 
-from zipline.utils.serialization_utils import (
-    VERSION_LABEL
-)
+from __init__ import VERSION_LABEL
 
 log = logbook.Logger('Risk Cumulative')
 
