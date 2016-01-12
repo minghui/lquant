@@ -72,6 +72,7 @@ class StrategyBase(object):
         :param data:
         :return:
         """
+        print 'go here'
         name = kwargs.get('name')
         price = kwargs.get("price")
         date = kwargs.get("date")
@@ -82,6 +83,7 @@ class StrategyBase(object):
             cost_tax = price*number*100*0.001
             record = Record(name=name, date=date,
                             number=number, price=price, tax=cost_tax, buy=True)
+            print 'This is the buy record: ', record
             self.stock_asset.add_record(record)
             self._buy_record_list.append(record)
             return True
@@ -100,7 +102,8 @@ class StrategyBase(object):
         date = kwargs.get('date')
         tax = kwargs.get("tax")
         record = self.stock_asset.get_record(name)
-        if record is not None:
+        if record is not None and record.number > 0:
+
             sell_record = Record(name=name, date=date,
                                  price=price, number=record.number,
                                  tax=0, sell=True)

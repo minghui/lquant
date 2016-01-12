@@ -1,4 +1,4 @@
-test_list: [600741]
+test_list: [600741, 601668]
 date_type: "%Y%m%d"
 database:
   name: rds

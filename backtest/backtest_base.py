@@ -132,7 +132,7 @@ class BackTestBase(object):
                                                  end=self._end_date)
             self.asset_dict.update({stock:
                                         {
-                                            "return": result,
+                                            stock+"_return": result,
                                             "max_withdraw": max_withdraw
                                          }})
         self.summary()
@@ -206,7 +206,7 @@ class BackTestBase(object):
         :return:
         """
         # print 'This is the stock_data', stock_data
-        buy_detail = self._strategy.if_buy(stock_data)
+        buy_detail = self._strategy.if_buy(stock_data, name=stock)
         if buy_detail is not None:
             result = self._strategy.buy_strategy(name=stock,
                                                  price=buy_detail[0],
@@ -215,7 +215,7 @@ class BackTestBase(object):
                                                  buy=True)
             if result:
                 return
-        sell_detail = self._strategy.if_sell(stock_data)
+        sell_detail = self._strategy.if_sell(stock_data, name=stock)
         if sell_detail is not None:
             self._strategy.sell_strategy(name=stock,
                                          price=sell_detail[0],
