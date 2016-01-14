@@ -35,6 +35,7 @@ class MySQLUtils(DBBase):
         self.source = source
         self.db = MySQLdb.connect(user=self.user, passwd=self.passwd, db=self.dbname, charset='utf8')
         self.cur = self.db.cursor()
+        self._column_name = ["date", "open", "high", "low", "close", "volume", "deal"]
 
     def create_db(self, stock_name):
         # self.stock_name = stock_name
