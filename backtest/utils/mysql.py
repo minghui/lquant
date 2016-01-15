@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import datetime
 from backtest.utils.dbbase import DBBase
-from backtest.utils.ohlc import OHLCVD
+from backtest.data.ohlc import OHLCVD
 
 
 def rec_sql(data, headers=None):

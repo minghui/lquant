@@ -3,23 +3,28 @@ __author__ = 'squall'
 
 import numpy as np
 import pandas as pd
+import talib
+
 """
 This file contain all the method used for parsing OHLC data.
 """
 
 
 class OHLCVD(object):
-
     def __init__(self, data):
         if isinstance(data, np.ndarray):
             self.data = data
-            self.dataframe = pd.DataFrame(data=data, columns=["date", "open", "high", "low", "close", "volume", "deal"])
+            self.dataframe = pd.DataFrame(data=data,
+                                          columns=["date", "open", "high", "low", "close", "volume",
+                                                   "deal"])
         elif isinstance(data, pd.DataFrame):
             self.dataframe = data
             self.data = data.values
         elif isinstance(data, list):
             self.data = np.array(data)
-            self.dataframe = pd.DataFrame(data=data, columns=["date", "open", "high", "low", "close", "volume", "deal"])
+            self.dataframe = pd.DataFrame(data=data,
+                                          columns=["date", "open", "high", "low", "close", "volume",
+                                                   "deal"])
         else:
             raise ValueError("Do not support type")
         if self.data.shape[1] != 7:
@@ -37,3 +42,9 @@ class OHLCVD(object):
     def get_array(self):
         return self.data
 
+    def set_config(self, config_name):
+
+        def read_config(config_file):
+            pass
+
+        pass
