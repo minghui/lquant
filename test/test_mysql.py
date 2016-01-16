@@ -9,6 +9,6 @@ if __name__ == '__main__':
     result = db.get_array('sh600741', begin='2015-10-10', end='2015-12-12')
     ohlc = OHLCVD(data=result)
     ohlc.add_macd()
-    ohlc.dataframe.plot()
+    ohlc.data_frame.plot()
     from matplotlib import pylab as plt
     plt.show()
