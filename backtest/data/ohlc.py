@@ -6,7 +6,6 @@ import pandas as pd
 import talib
 import codecs
 import yaml
-# from backtest.utils.mysql import MySQLUtils
 
 """
 This file contain all the method used for parsing OHLC data.
