@@ -109,6 +109,7 @@ class OHLCVD(object):
         :param parameters:
         :return:
         """
+        # TODO: Test if this method work.
         extract_method = talib.get_functions(feature_name)
         if parameters is not None and isinstance(parameters, dict):
             feature = extract_method(self._inputs, parameters)
