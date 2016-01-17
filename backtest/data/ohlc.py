@@ -40,6 +40,7 @@ class OHLCVD(object):
             'close': data[:, 4].astype(np.float64),
             'volume': np.exp(data[:, 5].astype(np.float64))
         }
+        self.columns = ["date", "open", "high", "low", "close", "volume", "deal"]
 
     def current_time(self):
         return self.data[-1, 0]
@@ -82,11 +83,44 @@ class OHLCVD(object):
         macd_result = talib.abstract.MACD(self._inputs)
         macd_result = np.vstack(macd_result).T
         macd_result = np.hstack((self.data, macd_result))
+        self.columns = self.columns + ["dea", "dma", "dif"]
         self.data_frame = pd.DataFrame(data=macd_result,
-                                       columns=["date", "open", "high", "low", "close", "volume",
-                                                "deal", "dea", "dma", "dif"],
+                                       columns=self.columns,
                                        index=self.data_frame.date)
         self.data = self.data_frame.values
         return True
+
+    def add_sar(self):
+        sar_result = talib.abstract.SAR(self._inputs)
+        sar_result = np.vstack(sar_result).T
+        sar_result = np.hstack((self.data, sar_result))
+        self.columns = self.columns + ['sar']
+        self.data_frame = pd.DataFrame(data=sar_result,
+                                       columns=self.columns,
+                                       index=self.data_frame.date)
+        self.data = self.data_frame.values
+        return True
+
+    def add_specified_feature(self, feature_name, column_name, parameters=None):
+        """
+        Use this method to extract all the feature we can get from talib.
+        :param feature_name:
+        :param column_name:
+        :param parameters:
+        :return:
+        """
+        extract_method = talib.get_functions(feature_name)
+        if parameters is not None and isinstance(parameters, dict):
+            feature = extract_method(self._inputs, parameters)
+        else:
+            feature = extract_method(self._inputs)
+        feature = np.vstack(feature).T
+        self.data = np.hstack((self.data, feature))
+        self.columns = self.columns + column_name
+        self.data_frame = pd.DataFrame(data=self.data,
+                                       columns=self.columns,
+                                       index=self.data_frame.date)
+        return True
+
 
 
