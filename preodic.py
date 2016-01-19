@@ -1,8 +1,8 @@
 # coding=utf-8
 
 from backtest.backtest_base import *
-from backtest.algorithm.data.record import Record
-from backtest.algorithm.StrategyBase import StrategyBase
+from data.record import Record
+from algorithm import StrategyBase
 
 
 class PeriodicStrategy(StrategyBase):

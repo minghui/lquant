@@ -1,10 +1,10 @@
 # coding=utf-8
 
 import numpy as np
+from matplotlib import pylab as plt
 
 from backtest.backtest_base import BackTestBase
-from backtest.algorithm.StrategyBase import StrategyBase
-from matplotlib import pylab as plt
+from algorithm import StrategyBase
 
 
 class mystrategy(StrategyBase):
