@@ -1,9 +1,10 @@
 # coding=utf-8
 
 from abc import abstractmethod
+
 from data.record_container import RecordContainer
 from backtest.utils.tax import *
-from backtest.algorithm.data.record import Record
+from algorithm.data.record import Record
 
 
 class StrategyBase(object):

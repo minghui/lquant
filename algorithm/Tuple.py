@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from backtest.algorithm.Algorithm import AlgorithmBase
+from algorithm.Algorithm import AlgorithmBase
 
 
 class Tuple(AlgorithmBase):

@@ -5,8 +5,6 @@ This is the base class of all the algorithm used in my project.
 '''
 
 from abc import abstractmethod
-from data.record import Record
-from data.record_container import RecordContainer
 
 
 class AlgorithmBase(object):
