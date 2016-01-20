@@ -63,6 +63,14 @@ class Record(object):
         else:
             raise ValueError('Only same stock can sub.')
 
+    def reject(self, data):
+        """
+        This is method is used to check if this record cam deal.
+        :param data:
+        :return:
+        """
+        return True
+
     def __repr__(self):
         buy_print_str = '''This is the buy record of %s , cost price is: %s,
         number is: %s, date is: %s'''
