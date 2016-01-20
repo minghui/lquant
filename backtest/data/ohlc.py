@@ -127,40 +127,51 @@ class OHLCVD(object):
         close_data = self.data_frame.close.values
         result = (close_data[1:] - close_data[0:-1])/close_data[0:-1]*100
         result = np.array([np.nan] + result.tolist())
-        self.data = np.hstack((self.data, result.T))
-        self.columns = self.columns.append("raise_rate")
+        result = result.reshape(result.shape[0], 1)
+        self.data = np.hstack((self.data, result))
+        print self.columns
+        self.columns.append("raise_rate")
+        print self.columns
         self.data_frame = pd.DataFrame(data=self.data,
                                        columns=self.columns,
                                        index=self.data_frame.date)
         return True
 
     def add_raise_day(self, n):
-        if "rasise_rate" not in self.columns:
+        if "raise_rate" not in self.columns:
             self.add_raise()
         data = self.data_frame.raise_rate.values
-        data = (data>0).astype(np.float64)
+        data = (data > 0).astype(np.float64)
         kernel = np.ones(n)
         result = np.convolve(kernel, data, 'valid')
-        result = np.array([np.nan]*n + result.tolist())
+        result = np.array([np.nan]*(n-1) + result.tolist())
+        result = result.reshape(result.shape[0], 1)
         self._add_new_feature(result, "raise_days_"+str(n))
         return True
 
     def add_fall_days(self, n):
         if "raise_rate" not in self.columns:
             self.add_raise()
-
         data = self.data_frame.raise_rate.values
-        data = (data<0).astype(np.float64)
+        data = (data < 0).astype(np.float64)
         kernel = np.ones(n)
         result = np.convolve(kernel, data, 'valid')
-        result = np.array([np.nan]*n + result.tolist())
+        result = np.array([np.nan]*(n-1) + result.tolist())
+        result = result.reshape(result.shape[0], 1)
         self._add_new_feature(result, "fall_days_"+str(n))
 
+    def __getitem__(self, item):
+        pass
+
     def _add_new_feature(self, data, columns):
-        self.data = np.hstack((self.data, data.T))
-        self.columns = self.columns + columns
+        self.data = np.hstack((self.data, data))
+        if isinstance(columns, list):
+            self.columns = self.columns + columns
+        elif isinstance(columns, str):
+            self.columns.append(columns)
+        else:
+            raise ValueError("Wrong type of columns")
         self.data_frame = pd.DataFrame(data=self.data,
                                        columns=self.columns,
                                        index=self.data_frame.date)
-
 
