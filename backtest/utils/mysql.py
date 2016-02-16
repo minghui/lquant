@@ -122,6 +122,7 @@ class MySQLUtils(DBBase):
             source=self.source,
             begin=begin,
             end=end))
+        result = [x[0] for x in result]
         return result
 
 if __name__ == '__main__':

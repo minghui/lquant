@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from data.record import Record
+from record import Record
 from backtest.utils.tax import *
 
 
@@ -15,7 +15,7 @@ class RecordContainer(object):
 
     def add_record(self, record):
         if self._stock_records.__contains__(record.name):
-            if record.buy == True:
+            if record.buy:
                 self._stock_records[record.name] += record
             else:
                 self._stock_records[record.name] -= record

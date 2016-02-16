@@ -10,7 +10,7 @@ except:
 import codecs
 from __init__ import *
 import pandas as pd
-from matplotlib import pylab as plt
+# from matplotlib import pylab as plt
 from backtest.utils.rds import RDSDB
 from datetime import datetime, timedelta
 
@@ -106,7 +106,8 @@ class BackTestBase(object):
                                                      begin=self._begin_date,
                                                      end=self._end_date)
             for day in work_days:
-                day = datetime.strptime(str(day), self._date_type)
+                if isinstance(day, int) or isinstance(day, str):
+                    day = datetime.strptime(str(day), self._date_type)
                 if self._need_data_length.endswith('days'):
                     data_len = int(self._need_data_length.split('days')[0])
                     begin = datetime.strftime(day-timedelta(data_len-1),
@@ -132,9 +133,11 @@ class BackTestBase(object):
                                                  end=self._end_date)
             self.asset_dict.update({stock:
                                         {
-                                            stock+"_return": result,
+                                            str(stock) + "_return": result,
+                                            "return": result,
                                             "max_withdraw": max_withdraw
-                                         }})
+                                        }
+            })
         self.summary()
 
     def summary(self):

@@ -1,14 +1,18 @@
-test_list: [600741, 601668]
-date_type: "%Y%m%d"
+test_list: [600741, 601668, 601088]
+date_type: "%Y-%m-%d"
 database:
-  name: rds
+  name: mysql
+  user: root
+  passwd: 1988
+  database: test
+  source: STOCK
 query_type: day # minute
 need_data_length: 5days
 tax: 0.001
 trade_strategy:
   peroid: 5days # days minutes
 fund: 100000
-begin: 20150101
+begin: 20151001
 end: 20160106
 benchmark: 600000
 

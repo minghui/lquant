@@ -11,10 +11,13 @@ from itertools import repeat
 
 
 def insert_data(parameter):
-    print parameter[1]
-    # for stock in parameter[0]:
-    #     data = mlab.csv2rec(stock, delimiter='\t')
-    #     parameter[1].insert_data(data, id)
+    db = MySQLUtils(user='root', passwd='1988', dbname='test', source='stock')
+    # print parameter
+    for stock in parameter:
+        data = mlab.csv2rec(stock, delimiter='\t')
+        id = stock.split('\\')[-1].split('.')[0]
+        # print data
+        db.insert_data(data, id)
 
 
 def build_stock_list(data_path):
@@ -38,8 +41,9 @@ if __name__ == '__main__':
         if len(stock_list) % length != 0:
             begin = len(stock_list) / length * length
             stock_cache.append(stock_list[begin:begin + len(stock_list) % length])
-        pools = Pool(processes=args.n)
-        pools.map(insert_data, zip(stock_cache, repeat(db)))
+        print stock_cache
+        pools = Pool(args.n)
+        pools.map(insert_data, stock_cache)
         pools.close()
         pools.join()
     except Exception as e:

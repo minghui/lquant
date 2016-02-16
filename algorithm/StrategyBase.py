@@ -4,7 +4,7 @@ from abc import abstractmethod
 
 from data.record_container import RecordContainer
 from backtest.utils.tax import *
-from algorithm.data.record import Record
+from data.record import Record
 
 
 class StrategyBase(object):
@@ -73,7 +73,7 @@ class StrategyBase(object):
         :param data:
         :return:
         """
-        print 'go here'
+        # print 'go here'
         name = kwargs.get('name')
         price = kwargs.get("price")
         date = kwargs.get("date")

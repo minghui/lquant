@@ -4,7 +4,7 @@ import numpy as np
 from matplotlib import pylab as plt
 
 from backtest.backtest_base import BackTestBase
-from algorithm import StrategyBase
+from algorithm.StrategyBase import StrategyBase
 
 
 class mystrategy(StrategyBase):
@@ -36,9 +36,9 @@ class CountStrategy(StrategyBase):
 
     def if_buy(self, data, name=None):
         down = data[1:, 4] - data[:-1, 4]
-        print np.sum(down<0)
+        print np.sum(down < 0)
         # print 'This is the dta shape', data.shape[0]
-        if np.sum(down<0) >= data.shape[0]-1:
+        if np.sum(down < 0) >= data.shape[0] - 1:
             return data[-1, 4], data[-1, 0]
 
     def if_sell(self, data, name=None):
