@@ -6,6 +6,14 @@ from Configurable import Configurable
 
 class OrderBook(Configurable):
 
+    def __init__(self):
+        """
+        Now, do not think about the different account.
+        :return:
+        """
+        self._account = Account()
+        self._order_list = []
+
     def set_to_context(self, context):
         pass
 
@@ -15,5 +23,8 @@ class OrderBook(Configurable):
     def configure(self, configure, context):
         pass
 
-    def __init__(self):
-        self._account = Account()
+    def receive_order(self, order):
+        pass
+
+    def reject(self):
+        pass

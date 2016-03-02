@@ -36,6 +36,8 @@ class MySQLUtils(DBBase):
         self.db = MySQLdb.connect(user=self.user, passwd=self.passwd, db=self.dbname, charset='utf8')
         self.cur = self.db.cursor()
         self._column_name = ["date", "open", "high", "low", "close", "volume", "deal"]
+        self._end_date = None
+        self._end_date_set = False
 
     def create_db(self, stock_name):
         # self.stock_name = stock_name
@@ -124,6 +126,18 @@ class MySQLUtils(DBBase):
             end=end))
         result = [x[0] for x in result]
         return result
+
+    def set_end_date(self, end_date):
+        self._end_date = end_date
+        self._end_date_set = True
+
+    def select_data(self, parameter, mode="n"):
+        if mode not in ["n", "date"]:
+            raise ValueError("wrong mode")
+        if mode == "n":
+            self.select_data()
+        elif mode == "date":
+            pass
 
 if __name__ == '__main__':
     stock_db = MySQLUtils('root', '1988', 'test', 'stock')

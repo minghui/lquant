@@ -2,9 +2,9 @@
 
 from abc import abstractmethod
 
-from data.record_container import RecordContainer
+from data.record_container import OrderBook
 from backtest.utils.tax import *
-from data.record import Record
+from data.order import Order
 
 
 class StrategyBase(object):
@@ -17,7 +17,7 @@ class StrategyBase(object):
         self._data_need = None
         self._fund = 0
         # for every stock we have a container
-        self.stock_asset = RecordContainer()
+        self.stock_asset = OrderBook()
         self.asset_daliy = None
         self._sell_record_list = []
         self._buy_record_list = []
@@ -82,10 +82,10 @@ class StrategyBase(object):
         if number != 0:
             self._fund -= price*(1+tax)*number*100
             cost_tax = price*number*100*0.001
-            record = Record(name=name, date=date,
+            record = Order(name=name, date=date,
                             number=number, price=price, tax=cost_tax, buy=True)
             print 'This is the buy record: ', record
-            self.stock_asset.add_record(record)
+            self.stock_asset.add_order(record)
             self._buy_record_list.append(record)
             return True
         return False
@@ -102,21 +102,21 @@ class StrategyBase(object):
         price = kwargs.get("price")
         date = kwargs.get('date')
         tax = kwargs.get("tax")
-        record = self.stock_asset.get_record(name)
+        record = self.stock_asset.get_order(name)
         if record is not None and record.number > 0:
 
-            sell_record = Record(name=name, date=date,
+            sell_record = Order(name=name, date=date,
                                  price=price, number=record.number,
                                  tax=0, sell=True)
             print 'This is the sell record:', sell_record
             self._fund += record.number * price * 100*(1-tax)
-            self.stock_asset.add_record(sell_record)
+            self.stock_asset.add_order(sell_record)
             self._sell_record_list.append(sell_record)
             return True
         return False
 
     def get_asset(self, stock, data):
-        record = self.stock_asset.get_record(stock)
+        record = self.stock_asset.get_order(stock)
         if record is not None:
             current_asset = self._fund + record.number * data[4] * 100
         else:

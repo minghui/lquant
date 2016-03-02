@@ -1,0 +1,23 @@
+tax:
+  stamp_tax: 0.001
+  broker_tax: 0.001
+  min_cost: 5
+
+account:
+  user: longyao
+  passwd: 1988
+  loss_limit: 0.02
+  profit_limit: 0.06
+
+market:
+  type: t+1
+
+backtest:
+  step: 1d
+  data_source:
+    type: mysql
+    username: longyao
+    passwd: 1988
+
+data:
+

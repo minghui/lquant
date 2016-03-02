@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from backtest.backtest_base import *
-from data.record import Record
+from data.order import Order
 from algorithm import StrategyBase
 
 
@@ -28,7 +28,7 @@ class PeriodicStrategy(StrategyBase):
             buy_number = np.floor(self._fund/(current_price*100))
             cost_money = buy_number*current_price*100
             self._fund -= (cost_money + self.tax*cost_money)
-            return Record(stock_name,
+            return Order(stock_name,
                           buy=True,
                           sell=False,
                           number=buy_number,

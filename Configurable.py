@@ -12,7 +12,7 @@ class Configurable(object):
             self.successed = True
 
     @abstractmethod
-    def configure(self, configure, context):
+    def init_from_config(self, configure, **kwargs):
         pass
 
     @abstractmethod
