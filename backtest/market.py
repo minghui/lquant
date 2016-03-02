@@ -13,6 +13,10 @@ from account import Account
 
 class Market(Configurable):
 
+    def __init__(self):
+        self._account = None
+        self._order_book = None
+
     def set_to_context(self, context):
         pass
 
@@ -20,5 +24,7 @@ class Market(Configurable):
         pass
 
     def configure(self, configure, context):
-        self._account = None
+        self._account = Account()
+        self._order_book = OrderBook()
+
 

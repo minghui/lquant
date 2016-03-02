@@ -1,10 +1,10 @@
 # coding=utf-8
 
-from record import Record
+from order import Order
 from backtest.utils.tax import *
 
 
-class RecordContainer(object):
+class OrderBook(object):
     """
     This class is used to contain the record.
     When add record to the container, container should compute the
@@ -13,17 +13,17 @@ class RecordContainer(object):
         self._stock_records = {}
         self._stock_money = None
 
-    def add_record(self, record):
-        if self._stock_records.__contains__(record.name):
-            if record.buy:
-                self._stock_records[record.name] += record
+    def add_order(self, order):
+        if self._stock_records.__contains__(order.name):
+            if order.buy:
+                self._stock_records[order.name] += order
             else:
-                self._stock_records[record.name] -= record
+                self._stock_records[order.name] -= order
         else:
-            self._stock_records.update({record.name: record})
+            self._stock_records.update({order.name: order})
         self._sync()
 
-    def get_record(self, name):
+    def get_order(self, name):
         if name in self._stock_records:
             return self._stock_records[name]
         return None
@@ -56,12 +56,12 @@ class RecordContainer(object):
 
 
 if __name__ == '__main__':
-    record_container = RecordContainer()
-    record = Record(name='fuck', price=10.0, number=10, buy=True)
-    record_container.add_record(record)
-    record2 = Record(name='fuck', price=20.0, number=10, sell=True)
-    record_container.add_record(record2)
-    print record_container.get_record('fuck')
+    record_container = OrderBook()
+    record = Order(name='fuck', price=10.0, number=10, buy=True)
+    record_container.add_order(record)
+    record2 = Order(name='fuck', price=20.0, number=10, sell=True)
+    record_container.add_order(record2)
+    print record_container.get_order('fuck')
     print record_container.get_stock_cost_money()
     print record_container.get_stock_list()
-    print record_container.get_record('fuck')
+    print record_container.get_order('fuck')

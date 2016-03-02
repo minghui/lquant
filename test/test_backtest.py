@@ -42,7 +42,7 @@ class CountStrategy(StrategyBase):
             return data[-1, 4], data[-1, 0]
 
     def if_sell(self, data, name=None):
-        record = self.stock_asset.get_record(name)
+        record = self.stock_asset.get_order(name)
         if record is not None:
             result = (data[-1, 4] - record.price)/record.price *100
             if result > 5.0 or result < -3.0:

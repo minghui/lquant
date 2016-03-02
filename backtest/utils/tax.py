@@ -35,7 +35,34 @@ def buy_tax(price, number, market):
     else:
         return sz_tax(price, number)
 
+
 def max_buy_number(fund, price, tax):
     price = price + price*tax
     number = np.floor(fund/(price*100))
     return number
+
+
+class Tax(object):
+    key_this = "tax"
+    key_stamp_tax = "stamp_tax"
+    key_broker_tax = "broker_tax"
+
+    def __init__(self):
+        self._stamp_tax = None
+        self._broker_tax = None
+
+    def init_from_config(self, config):
+        if self.key_this in config:
+            this_config = config[self.key_this]
+            self._stamp_tax = this_config[self.key_stamp_tax_]
+            self._broker_tax = this_config[self.key_broker_tax]
+        else:
+            raise ValueError("Do not has {key} key".format(key=self.key_this))
+
+    def calculate_tax(self, order):
+        """
+        Input is order.
+        :param order:
+        :return:
+        """
+        return

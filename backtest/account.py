@@ -5,6 +5,13 @@ from order_book import OrderBook
 
 
 class Account(Configurable):
+    this_key = "account"
+    key_cash = "cash"
+
+    def __init__(self, cash):
+        self._cash = cash
+        self._stock_dict = {}
+        self._order_book = OrderBook()
 
     def set_to_context(self, context):
         pass
@@ -12,25 +19,26 @@ class Account(Configurable):
     def get_from_context(self, context):
         pass
 
-    def __init__(self, cash):
-        self._cash = cash
-        self._stock_dict = {}
-        self._order_book = OrderBook()
+    def init_from_config(self, config, **kwargs):
+        if self.this_key in config:
+            config_dict = config[self.this_key]
+        else:
+            raise ValueError("Do not have the key")
+        self._cash = config_dict[self.key_cash]
 
     @property
-    def get_cash(self):
+    def cash(self):
         return self._cash
 
-    @property
-    def set_cash(self, cash):
+    @cash.setter
+    def cash(self, cash):
         self._cash = cash
 
     def add_cash(self, added_cash):
         self._cash = added_cash
 
-    def configure(self, configure, context):
+    def reset(self):
         pass
 
-    @staticmethod
-    def get_from_context(context, key):
-        context.get_object(key)
+    def asset(self, date):
+        pass

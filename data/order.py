@@ -1,7 +1,7 @@
 # coding=utf-8
+import json
 
-
-class Record(object):
+class Order(object):
 
     def __init__(self, name=None, price=None, number=None, tax=0, date=None,
                  buy=False, sell=False, **kwargs):
@@ -24,10 +24,12 @@ class Record(object):
         self.buy = buy
         self.sell = sell
         self.number = number
+        if "current_price" in kwargs:
+            self.current_price = kwargs["current_price"]
         self.__dict__.update(kwargs)
 
     def __add__(self, record):
-        if not isinstance(record, Record):
+        if not isinstance(record, Order):
             raise ValueError('Must a Record class')
         if self.name == record.name:
             # FIXME: This is bullshit.
@@ -35,14 +37,14 @@ class Record(object):
                      record.number*record.price)/(self.number+record.number)
             number = self.number + record.number
             # FIXME: Should not return self, but a new record. Here should change.
-            return Record(name=self.name, price=price, tax=self.tax,
+            return Order(name=self.name, price=price, tax=self.tax,
                           number=number, date=self.date, buy=self.buy,
                           sell=self.buy)
         else:
             raise ValueError('Only same stock can add.')
 
     def __sub__(self, record):
-        if not isinstance(record, Record):
+        if not isinstance(record, Order):
             raise ValueError('Must a Record class can sub')
         if self.name == record.name:
             if self.number < record.number:
@@ -57,19 +59,11 @@ class Record(object):
             else:
                 # self.price = -return_value/record.number
                 price = -return_value/record.number
-            return Record(name=self.name, price=price, number=number,
+            return Order(name=self.name, price=price, number=number,
                           tax=self.tax, date=self.date, buy=self.buy,
                           sell=self.buy)
         else:
             raise ValueError('Only same stock can sub.')
-
-    def reject(self, data):
-        """
-        This is method is used to check if this record cam deal.
-        :param data:
-        :return:
-        """
-        return True
 
     def __repr__(self):
         buy_print_str = '''This is the buy record of %s , cost price is: %s,
@@ -85,11 +79,17 @@ class Record(object):
         else:
             return 'Do not have record'
 
+    def set_tax(self, tax):
+        self.tax = tax
+
+    def get_dict(self):
+        return self.__dict__
+
 
 if __name__ == '__main__':
-    record = Record(name='test', number=200.0, price=10.0, tax=5, buy=True)
+    record = Order(name='test', number=200.0, price=10.0, tax=5, buy=True)
     print record
-    record1 = Record(name='test', number=100.0, price=15.0, tax=5, buy=True)
+    record1 = Order(name='test', number=100.0, price=15.0, tax=5, buy=True)
     result = record-record1
     print result
     print record

@@ -76,6 +76,7 @@ class BackTestBase(object):
         self._trade_strategy = None
         self._date_type = config['date_type']
         self._tax = config["tax"]
+        self._market = None
 
     def init(self, strategy=None, trade_strategy=None, analysis=None):
         """
