@@ -14,7 +14,7 @@ class Account(Configurable):
 
     def __init__(self, cash):
         self._cash = cash
-        self._stock_dict = {}
+        self._stock_asset = {}
         self._order_book = OrderBook()
 
     def init_from_config(self, config, **kwargs):
