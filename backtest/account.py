@@ -92,7 +92,7 @@ class Account(Configurable):
         :param date:
         :return:
         """
-        pass
+        return None
 
     def _update_asset(self, date):
         """
