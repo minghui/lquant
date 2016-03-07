@@ -1,22 +1,21 @@
 # coding=utf-8
 
 from Configurable import Configurable
-from order_book import OrderBook
+from backtest.order_book import OrderBook
 
 
-class Account(object):
-    this_key = "account"
-    key_cash = "cash"
+class Account(Configurable):
+
+    def set_to_context(self, context):
+        pass
+
+    def get_from_context(self, context):
+        pass
 
     def __init__(self, cash):
-        self._origin_cash = cash
         self._cash = cash
-        self._stock_asset = {}
+        self._stock_dict = {}
         self._order_book = OrderBook()
-        self._daliy_asset = {}
-        self._current_positon = None
-        self._daliy_positon = {}
-        self._dbbase = None
 
     def init_from_config(self, config, **kwargs):
         if self.this_key in config:

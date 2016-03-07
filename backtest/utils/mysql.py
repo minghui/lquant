@@ -131,13 +131,31 @@ class MySQLUtils(DBBase):
         self._end_date = end_date
         self._end_date_set = True
 
-    def select_data(self, parameter, mode="n"):
-        if mode not in ["n", "date"]:
-            raise ValueError("wrong mode")
-        if mode == "n":
-            self.select_data()
-        elif mode == "date":
-            pass
+    def select_data_by_number(self, number, end_date):
+        """
+        Select data by number.
+        :param number:
+        :param end_date:
+        :return:
+        """
+        sql_str = """ select * from (select * from {source} where date <= {end_date} order by
+date )a limit {number}""".format(source=self.source, end_date=end_date,
+                                 number=number)
+        data = self.execute_sql(sql_str)
+        return data
+
+    def select_data_by_date(self, begin_date, end_date):
+        """
+        Select data by begin_date and end date.
+        :param begin_date:
+        :param end_date:
+        :return:
+        """
+        sql_str = """ select * from {source} where date >= {begin_date} and
+ date <= {end_date}""".format(source=self.source, begin_date=begin_date,
+                              end_date=end_date)
+        data = self.execute_sql(sql_str)
+        return data
 
 if __name__ == '__main__':
     stock_db = MySQLUtils('root', '1988', 'test', 'stock')
