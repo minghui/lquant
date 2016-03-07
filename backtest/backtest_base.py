@@ -13,6 +13,10 @@ import pandas as pd
 # from matplotlib import pylab as plt
 from backtest.utils.rds import RDSDB
 from datetime import datetime, timedelta
+from backtest.context import  Context
+from backtest.account import Account
+from backtest.order_book import  OrderBook
+from data.order import Order
 
 
 DATA_NEED = {
@@ -51,6 +55,15 @@ class BackTestBase(object):
         self._base_fund = self._fund
         self._begin_date = config['begin']
         self._end_date = config['end']
+
+        #Trade period config
+        if "trade_period" in config:
+            self._trade_peroid_set = True
+            self._trade_peroid_begin = config["trade_period"]["begin"]
+            self._trade_peroid_end = config["trade_period"]["end"]
+        else:
+            self._trade_peroid_set = False
+
         # Compare with
         self._benchmark_name = config['benchmark']
         self._benchmark_data = None
@@ -77,6 +90,7 @@ class BackTestBase(object):
         self._date_type = config['date_type']
         self._tax = config["tax"]
         self._market = None
+        self._account = None
 
     def init(self, strategy=None, trade_strategy=None, analysis=None):
         """
@@ -194,6 +208,24 @@ class BackTestBase(object):
         min_price = after_data[min_loc]
         max_return = (day_data[max_loc] - min_price)/day_data[min_loc] * 100
         return max_return
+
+    def test_low_freq(self, name, date):
+        self._database.set_end_date(date)
+        # Every time transform the date to the algorithm. Algorithm get the data it self, but we should make sure so not get future data.
+        context = Context()
+        context.account = self._account
+        context.date = date
+        context.db = self._database
+        context.asset_code = name
+        order = self._strategy.if_buy(context)
+        if order is not None:
+            self._account.buy(order)
+        order = self._strategy.if_sell(context)
+        if order is not None:
+            self._account.sell(order)
+
+    def test_high_freq(self):
+        pass
 
     def _init_assert(self):
         """

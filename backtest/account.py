@@ -1,22 +1,21 @@
 # coding=utf-8
 
 from Configurable import Configurable
-from order_book import OrderBook
+from backtest.order_book import OrderBook
 
 
-class Account(object):
-    this_key = "account"
-    key_cash = "cash"
+class Account(Configurable):
+
+    def set_to_context(self, context):
+        pass
+
+    def get_from_context(self, context):
+        pass
 
     def __init__(self, cash):
-        self._origin_cash = cash
         self._cash = cash
-        self._stock_asset = {}
+        self._stock_dict = {}
         self._order_book = OrderBook()
-        self._daliy_asset = {}
-        self._current_positon = None
-        self._daliy_positon = {}
-        self._dbbase = None
 
     def init_from_config(self, config, **kwargs):
         if self.this_key in config:
@@ -78,13 +77,34 @@ class Account(object):
             return False
 
     def _after_market(self, date):
+        """
+        Process the data after the market close.
+        :param date:
+        :return:
+        """
         for key in self._stock_asset:
             current_price = self._dbbase.get(key, date)
             self._stock_asset[key].current_price = current_price
 
-    def _update_asset(self, date):
+    def _before_market(self, date):
+        """
+        process the data before the market open.
+        :param date:
+        :return:
+        """
+        pass
 
+    def _update_asset(self, date):
+        """
+        Update the asset result.
+        :param date:
+        :return:
+        """
         for key in self._stock_asset:
             stock_asset = self._stock_asset[key]
             data = self._dbbase.get(stock_asset.name, date)
             stock_asset.current_price = data
+
+
+if __name__ == "__main__":
+    pass

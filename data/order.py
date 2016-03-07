@@ -52,7 +52,7 @@ class Order(object):
             return_value = (order.number*order.price-order.tax) - \
                            (order.number*self.price)
             # self.number -= record.number
-            number = self.number - order.number
+            number = self.number - record.number
             if self.number != 0:
                 # self.price = (self.price*self.number - return_value)/self.number
                 price = (self.price*self.number - return_value)/self.number
@@ -84,6 +84,10 @@ class Order(object):
 
     def get_dict(self):
         return self.__dict__
+
+    @staticmethod
+    def create_order(name, date, price, number):
+        return Order(name=name, date=date, price=price, number=number)
 
 
 if __name__ == '__main__':

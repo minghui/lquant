@@ -1,4 +1,5 @@
 # coding=utf-8
+from backtest.account import Account
 
 
 class Context(object):
@@ -7,4 +8,11 @@ class Context(object):
     """
 
     def __init__(self):
-        pass
+        self.account = None
+        self.db = None
+        self.date = None
+
+
+if __name__ == "__main__":
+    context = Context()
+    context.account = Account(1000)

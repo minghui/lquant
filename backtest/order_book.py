@@ -1,6 +1,5 @@
 # coding=utf-8
 
-from account import Account
 from Configurable import Configurable
 
 
@@ -11,7 +10,6 @@ class OrderBook(Configurable):
         Now, do not think about the different account.
         :return:
         """
-        self._account = Account()
         self._order_list = []
 
     def set_to_context(self, context):
