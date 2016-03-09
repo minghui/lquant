@@ -51,8 +51,8 @@ class BackTestBase(object):
             self._backtest_list = config['test_list']
         else:
             self._backtest_list = ALL_STOCK_LIST
-        self._fund = config['fund']
-        self._base_fund = self._fund
+        self._cash = config['cash']
+        self._base_cash = self._cash
         self._begin_date = config['begin']
         self._end_date = config['end']
 
@@ -116,7 +116,7 @@ class BackTestBase(object):
         if self._strategy is None:
             raise ValueError("Do not have a strategy")
         for stock in self._backtest_list:
-            self._strategy.init(self._fund)
+            self._strategy.init(self._cash)
             work_days = self._database.get_work_days(stock,
                                                      begin=self._begin_date,
                                                      end=self._end_date)
@@ -231,8 +231,8 @@ class BackTestBase(object):
         """
         Init the asset.
         """
-        self._fund = self._base_fund
-        self._strategy.init(self._fund)
+        self._cash = self._base_fund
+        self._strategy.init(self._cash)
 
     def _test_strategy(self, stock, stock_data):
         """
@@ -258,6 +258,7 @@ class BackTestBase(object):
                                          date=sell_detail[1],
                                          tax=self._tax,
                                          sell=True)
+
 
 if __name__ == '__main__':
     import yaml

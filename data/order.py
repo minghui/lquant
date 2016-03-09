@@ -26,6 +26,8 @@ class Order(object):
         self.number = number
         if "current_price" in kwargs:
             self.current_price = kwargs["current_price"]
+        else:
+            self.current_price = None
         self.__dict__.update(kwargs)
 
     def __add__(self, order):
@@ -52,7 +54,7 @@ class Order(object):
             return_value = (order.number*order.price-order.tax) - \
                            (order.number*self.price)
             # self.number -= record.number
-            number = self.number - record.number
+            number = self.number - order.number
             if self.number != 0:
                 # self.price = (self.price*self.number - return_value)/self.number
                 price = (self.price*self.number - return_value)/self.number
@@ -91,12 +93,12 @@ class Order(object):
 
 
 if __name__ == '__main__':
-    record = Order(name='test', number=200.0, price=10.0, tax=5, buy=True)
-    print record
+    order = Order(name='test', number=200.0, price=10.0, tax=5, buy=True)
+    print order
     record1 = Order(name='test', number=100.0, price=15.0, tax=5, buy=True)
-    result = record-record1
+    result = order-record1
     print result
-    print record
-    result = record + record1
+    print order
+    result = order + record1
     print result
 

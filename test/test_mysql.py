@@ -1,10 +1,10 @@
 # coding=utf-8
 __author__ = 'squall'
 
-from backtest.utils.mysql import MySQLUtils
-from backtest.data.ohlc import OHLCVD
 import numpy as np
 
+from backtest.utils.mysql import MySQLUtils
+from data.ohlc import OHLCVD
 
 if __name__ == '__main__':
     db = MySQLUtils('root', '1988', 'test', 'stock')

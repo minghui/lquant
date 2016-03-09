@@ -13,6 +13,7 @@ This file contain all the method used for parsing OHLC data.
 
 
 class OHLCVD(object):
+
     def __init__(self, data):
         if isinstance(data, np.ndarray):
             self.data = data
@@ -49,7 +50,7 @@ class OHLCVD(object):
         return self.data[-1, 4]
 
     def get_dataframe(self):
-        self.data_frame
+        return self.data_frame
 
     def get_array(self):
         return self.data
@@ -88,6 +89,16 @@ class OHLCVD(object):
                                        columns=self.columns,
                                        index=self.data_frame.date)
         self.data = self.data_frame.values
+        return True
+
+    def add_ma(self, length):
+        ma = talib.abstract.MA(self._inputs, timeperiods=length)
+        ma = ma.reshape((ma.shape[0], 1))
+        ma = np.hstack((self.data, ma))
+        self.columns = self.columns + ["ma"+str(length)]
+        self.data_frame = pd.DataFrame(data=ma,
+                                       columns=self.columns,
+                                       index=self.data_frame.date)
         return True
 
     def add_sar(self):

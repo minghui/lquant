@@ -4,12 +4,14 @@
 """
 insert the stock data to the mysql
 """
+import datetime
+
 import MySQLdb
 import numpy as np
 import pandas as pd
-import datetime
+
 from backtest.utils.dbbase import DBBase
-from backtest.data.ohlc import OHLCVD
+from data.ohlc import OHLCVD
 
 
 def rec_sql(data, headers=None):
@@ -138,11 +140,12 @@ class MySQLUtils(DBBase):
         :param end_date:
         :return:
         """
-        sql_str = """ select * from (select * from {source} where date <= {end_date} order by
-date )a limit {number}""".format(source=self.source, end_date=end_date,
+        sql_str = """ select DD, START, HIGH, LOW, CLOSE, VOLUME, DEAL from
+ {source} where date <= {end_date} order by
+date desc limit {number}""".format(source=self.source, end_date=end_date,
                                  number=number)
         data = self.execute_sql(sql_str)
-        return data
+        return np.array(data)
 
     def select_data_by_date(self, begin_date, end_date):
         """
@@ -151,7 +154,8 @@ date )a limit {number}""".format(source=self.source, end_date=end_date,
         :param end_date:
         :return:
         """
-        sql_str = """ select * from {source} where date >= {begin_date} and
+        sql_str = """ select DD, START, HIGH, LOW, CLOSE, VOLUME, DEAL
+  from {source} where date >= {begin_date} and
  date <= {end_date}""".format(source=self.source, begin_date=begin_date,
                               end_date=end_date)
         data = self.execute_sql(sql_str)

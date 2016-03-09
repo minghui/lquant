@@ -4,14 +4,14 @@ database:
   name: mysql
   user: root
   passwd: 1988
-  database: test
+  database: stock
   source: STOCK
 query_type: day # minute
 need_data_length: 5days
 tax: 0.001
 trade_strategy:
   peroid: 5days # days minutes
-fund: 100000
+cash: 100000
 begin: 20151001
 end: 20160106
 benchmark: 600000
