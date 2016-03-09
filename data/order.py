@@ -18,7 +18,7 @@ class Order(object):
         :return:
         """
         self.name = name
-        self.price = price
+        self.buy_price = price
         self.tax = tax
         self.date = date
         self.buy = buy
@@ -35,29 +35,33 @@ class Order(object):
             raise ValueError('Must a Record class')
         if self.name == order.name:
             # FIXME: This is bullshit.
-            price = (self.number*self.price+self.tax+order.tax+
-                     order.number*order.price)/(self.number+order.number)
+            price = (self.number*self.buy_price+self.tax+order.tax+
+                     order.number*order.buy_price)/(self.number+order.number)
             number = self.number + order.number
             # FIXME: Should not return self, but a new record. Here should change.
             return Order(name=self.name, price=price, tax=self.tax,
-                          number=number, date=self.date, buy=self.buy,
-                          sell=self.buy)
+                         number=number, date=self.date, buy=self.buy,
+                         sell=self.buy)
         else:
             raise ValueError('Only same stock can add.')
 
     def __sub__(self, order):
+        """
+        Sub method, maybe it is useless.
+        :type order: Order
+        """
         if not isinstance(order, Order):
             raise ValueError('Must a Record class can sub')
         if self.name == order.name:
             if self.number < order.number:
                 raise ValueError('Can not sell more stock than have.')
-            return_value = (order.number*order.price-order.tax) - \
-                           (order.number*self.price)
+            return_value = (order.number*order.buy_price-order.tax) - \
+                           (order.number*self.buy_price)
             # self.number -= record.number
             number = self.number - order.number
             if self.number != 0:
                 # self.price = (self.price*self.number - return_value)/self.number
-                price = (self.price*self.number - return_value)/self.number
+                price = (self.buy_price*self.number - return_value)/self.number
             else:
                 # self.price = -return_value/record.number
                 price = -return_value/order.number
@@ -73,10 +77,10 @@ class Order(object):
         sell_print_str = '''This is the sell record of %s , cost price is: %s,
         number is: %s, date is: %s'''
         if self.buy:
-            return buy_print_str % (self.name, self.price, self.number,
+            return buy_print_str % (self.name, self.buy_price, self.number,
                                     self.date)
         elif self.sell:
-            return sell_print_str % (self.name, self.price, self.number,
+            return sell_print_str % (self.name, self.buy_price, self.number,
                                      self.date)
         else:
             return 'Do not have record'

@@ -18,7 +18,8 @@ class OHLCVD(object):
         if isinstance(data, np.ndarray):
             self.data = data
             self.data_frame = pd.DataFrame(data=data,
-                                           columns=["date", "open", "high", "low", "close",
+                                           columns=["date", "open", "high",
+                                                    "low", "close",
                                                     "volume",
                                                     "deal"])
         elif isinstance(data, pd.DataFrame):
@@ -27,7 +28,8 @@ class OHLCVD(object):
         elif isinstance(data, list):
             self.data = np.array(data)
             self.data_frame = pd.DataFrame(data=data,
-                                           columns=["date", "open", "high", "low", "close",
+                                           columns=["date", "open", "high",
+                                                    "low", "close",
                                                     "volume",
                                                     "deal"])
         else:
@@ -41,7 +43,8 @@ class OHLCVD(object):
             'close': data[:, 4].astype(np.float64),
             'volume': np.exp(data[:, 5].astype(np.float64))
         }
-        self.columns = ["date", "open", "high", "low", "close", "volume", "deal"]
+        self.columns = ["date", "open", "high", "low", "close", "volume",
+                        "deal"]
 
     def current_time(self):
         return self.data[-1, 0]
@@ -81,6 +84,10 @@ class OHLCVD(object):
         self.data_frame = pd.DataFrame(self.data, index=self.data_frame.date)
 
     def add_macd(self):
+        """
+        Some method can be refactor.
+        :return:
+        """
         macd_result = talib.abstract.MACD(self._inputs)
         macd_result = np.vstack(macd_result).T
         macd_result = np.hstack((self.data, macd_result))

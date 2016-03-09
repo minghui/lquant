@@ -16,6 +16,8 @@ class Account(Configurable):
         self._cash = cash
         self._stock_asset = {}
         self._order_book = OrderBook()
+        self._new_order = {}
+        self._old_order = {}
 
     def init_from_config(self, config, **kwargs):
         if self.this_key in config:
@@ -57,21 +59,40 @@ class Account(Configurable):
             raise ValueError("Do not have so much money")
         if market.process_order(order):
             self._order_book.add_order(order)
+            # Add order to the asset.
             if order.name in self._stock_asset:
                 self._stock_asset[order.name] += order
+            else:
+                self._stock_asset[order.name] = order
+            # Add order to the new order.
+            if order.name in self._new_order:
+                self._new_order[order.name] += order
+            else:
+                self._new_order[order.name] = order
         else:
             return False
 
     def sell(self, order, market=None):
+        """
+        Sell order, there are some other process method should add.
+        :param order:
+        :param market:
+        :return:
+        """
         if market is None:
             raise ValueError("Invalid market")
-        if order.name not in self._stock_asset:
-            raise ValueError("Can sell do not have stock asset")
-        if order.number > self._stock_asset[order.name].number:
+
+        # Check if order in the old order
+        if order.name not in self._old_order:
+            raise ValueError("Do not have such stock asset")
+        if order.number > self._old_order[order.name].number:
             raise ValueError("Can not sell too much")
+
+        # Flash the order in the old order and the stock asset.
         if market.process_order(order):
             self._order_book.add_order(order)
             self._stock_asset[order.name] += order
+            self._old_order[order.name] += order
             return True
         else:
             return False
@@ -79,12 +100,19 @@ class Account(Configurable):
     def _after_market(self, date):
         """
         Process the data after the market close.
-        :param date:
+        :param date: type str
         :return:
         """
         for key in self._stock_asset:
             current_price = self._dbbase.get(key, date)
             self._stock_asset[key].current_price = current_price
+        # Combine the old_order and new_order
+        for name in self._new_order:
+            if name in self._old_order:
+                self._old_order[name] += self._new_order[name]
+            else:
+                self._old_order[name] = self._new_order[name]
+            self._new_order = {}
 
     def _before_market(self, date):
         """
