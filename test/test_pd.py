@@ -51,3 +51,9 @@ a = a.split(' ')
 if len(a) > 1:
     date = datetime.strptime(a[0], "%Y%m%d")
 print 'This is date time:', date
+
+
+
+import numpy as np
+
+np.mean()

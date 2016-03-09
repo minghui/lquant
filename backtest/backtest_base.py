@@ -121,6 +121,10 @@ class BackTestBase(object):
                                                      begin=self._begin_date,
                                                      end=self._end_date)
             for day in work_days:
+                context = Context()
+                context.db = self._database
+                context.date = day
+                context.account = self._account
                 if isinstance(day, int) or isinstance(day, str):
                     day = datetime.strptime(str(day), self._date_type)
                 if self._need_data_length.endswith('days'):

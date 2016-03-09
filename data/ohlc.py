@@ -171,6 +171,9 @@ class OHLCVD(object):
         result = result.reshape(result.shape[0], 1)
         self._add_new_feature(result, "fall_days_"+str(n))
 
+    def normalize(self):
+        pass
+
     def __getitem__(self, item):
         pass
 
@@ -185,4 +188,6 @@ class OHLCVD(object):
         self.data_frame = pd.DataFrame(data=self.data,
                                        columns=self.columns,
                                        index=self.data_frame.date)
+
+
 
