@@ -46,7 +46,7 @@ class CountStrategy(StrategyBase):
     def if_sell(self, data, name=None):
         record = self.stock_asset.get_order(name)
         if record is not None:
-            result = (data[-1, 4] - record.price)/record.price *100
+            result = (data[-1, 4] - record.buy_price)/record.buy_price * 100
             if result > 5.0 or result < -3.0:
                 return data[-1, 4], data[-1, 0]
 
@@ -54,7 +54,7 @@ class CountStrategy(StrategyBase):
 class MaStrategy(StrategyBase):
 
     def __init__(self):
-        StrategyBase.__init__()
+        StrategyBase.__init__(self)
 
     def if_buy(self, context):
         data = context.db.select_data_by_number(70, context.date)
@@ -67,10 +67,15 @@ class MaStrategy(StrategyBase):
         price = data_frame.close.values[-1]
         if (low - ma60_value) / ma60_value >= 0.2:
             number = np.floor(context.account.cash/(price*100))
-            return Order(date=context.date, price=price, number=number)
+            return Order(date=context.date, price=price, number=number, buy=True)
 
-    def is_sell(self):
-        pass
+    def is_sell(self, context):
+        context.account.get_return(context.date)
+        stock_asset = context.account.get_stock_asset()
+        for name in stock_asset:
+            if stock_asset[name].return_rate > 0.06 or stock_asset[name].return_rate  <= -0.03:
+                return Order(date=context.date, price=stock_asset[name].current_price,
+                             sell=False)
 
 
 if __name__ == '__main__':
@@ -89,5 +94,6 @@ if __name__ == '__main__':
     logging.getLogger('').addHandler(console)
     test_case = BackTestBase(config_file='./test_backtest.yaml', log=logging)
     test_strategy = CountStrategy()
-    test_case.init(strategy=test_strategy, analysis=analysis)
+    ma_strategy = MaStrategy()
+    test_case.init(strategy=ma_strategy, analysis=analysis)
     test_case.test_strategy()

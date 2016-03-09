@@ -24,6 +24,7 @@ class Order(object):
         self.buy = buy
         self.sell = sell
         self.number = number
+        self.return_rate = 0.0
         if "current_price" in kwargs:
             self.current_price = kwargs["current_price"]
         else:

@@ -38,6 +38,13 @@ class BackTestBase(object):
     '''
 
     def __init__(self, config_file=None, *args, **kwargs):
+        """
+        Init the paramter.
+        :param config_file:
+        :param args:
+        :param kwargs:
+        :return:
+        """
         self.logger = kwargs.get('log')
         self._buy_record_list = []
         self._sell_record_list = []
@@ -121,43 +128,45 @@ class BackTestBase(object):
                                                      begin=self._begin_date,
                                                      end=self._end_date)
             for day in work_days:
-                context = Context()
-                context.db = self._database
-                context.date = day
-                context.account = self._account
-                if isinstance(day, int) or isinstance(day, str):
-                    day = datetime.strptime(str(day), self._date_type)
-                if self._need_data_length.endswith('days'):
-                    data_len = int(self._need_data_length.split('days')[0])
-                    begin = datetime.strftime(day-timedelta(data_len-1),
-                                              self._date_type)
-                    end = datetime.strftime(day+timedelta(1), self._date_type)
-                else:
-                    raise ValueError("Do not supoort data length")
-                m_type = M_TYOE[self._qury_type]
-                stock_data = self._database.get_array(stock, begin=begin,
-                                                      end=end, m=m_type)
-                self._test_strategy(stock, stock_data=stock_data)
-                self._strategy.get_asset(stock, stock_data[-1])
-                # print 'This is stock data', stock_data
-            # print stock_data
-            # print 'This is date index', date_index
-            date_index = [datetime.strptime(str(x), self._date_type) for x
-                          in work_days]
-            result = pd.DataFrame(data=self._strategy.asset_daliy,
-                                  index=date_index,
-                                  columns=["return"])
-            self._summary[stock] = self._strategy.summary()
-            max_withdraw = self.get_max_withdraw(stock, begin=self._begin_date,
-                                                 end=self._end_date)
-            self.asset_dict.update({stock:
-                                        {
-                                            str(stock) + "_return": result,
-                                            "return": result,
-                                            "max_withdraw": max_withdraw
-                                        }
-            })
-        self.summary()
+                self.test_low_freq(stock, day)
+        #         context = Context()
+        #         context.db = self._database
+        #         context.date = day
+        #         context.account = self._account
+        #         if isinstance(day, int) or isinstance(day, str):
+        #             day = datetime.strptime(str(day), self._date_type)
+        #         if self._need_data_length.endswith('days'):
+        #             data_len = int(self._need_data_length.split('days')[0])
+        #             begin = datetime.strftime(day-timedelta(data_len-1),
+        #                                       self._date_type)
+        #             end = datetime.strftime(day+timedelta(1), self._date_type)
+        #         else:
+        #             raise ValueError("Do not supoort data length")
+        #         m_type = M_TYOE[self._qury_type]
+        #         stock_data = self._database.get_array(stock, begin=begin,
+        #                                               end=end, m=m_type)
+        #         self._test_strategy(stock, stock_data=stock_data)
+        #         self._strategy.get_asset(stock, stock_data[-1])
+        #         self._account.after_market()
+        #         # print 'This is stock data', stock_data
+        #     # print stock_data
+        #     # print 'This is date index', date_index
+        #     date_index = [datetime.strptime(str(x), self._date_type) for x
+        #                   in work_days]
+        #     result = pd.DataFrame(data=self._strategy.asset_daliy,
+        #                           index=date_index,
+        #                           columns=["return"])
+        #     self._summary[stock] = self._strategy.summary()
+        #     max_withdraw = self.get_max_withdraw(stock, begin=self._begin_date,
+        #                                          end=self._end_date)
+        #     self.asset_dict.update({stock:
+        #                                 {
+        #                                     str(stock) + "_return": result,
+        #                                     "return": result,
+        #                                     "max_withdraw": max_withdraw
+        #                                 }
+        #     })
+        # self.summary()
 
     def summary(self):
         """
@@ -214,8 +223,16 @@ class BackTestBase(object):
         return max_return
 
     def test_low_freq(self, name, date):
+        """
+        In this method test the low frequency
+        :param name:
+        :param date:
+        :return:
+        """
         self._database.set_end_date(date)
-        # Every time transform the date to the algorithm. Algorithm get the data it self, but we should make sure so not get future data.
+        # Every time transform the date to the algorithm.
+        #  Algorithm get the data it self, but we should make
+        #  sure so not get future data.
         context = Context()
         context.account = self._account
         context.date = date

@@ -12,12 +12,13 @@ class Account(Configurable):
     def get_from_context(self, context):
         pass
 
-    def __init__(self, cash):
+    def __init__(self, cash, database):
         self._cash = cash
         self._stock_asset = {}
         self._order_book = OrderBook()
         self._new_order = {}
         self._old_order = {}
+        self._dbbase = database
 
     def init_from_config(self, config, **kwargs):
         if self.this_key in config:
@@ -97,7 +98,7 @@ class Account(Configurable):
         else:
             return False
 
-    def _after_market(self, date):
+    def after_market(self, date):
         """
         Process the data after the market close.
         :param date: type str
@@ -113,6 +114,7 @@ class Account(Configurable):
             else:
                 self._old_order[name] = self._new_order[name]
             self._new_order = {}
+        self._update_asset(date)
 
     def _before_market(self, date):
         """
@@ -132,6 +134,18 @@ class Account(Configurable):
             stock_asset = self._stock_asset[key]
             data = self._dbbase.get(stock_asset.name, date)
             stock_asset.current_price = data
+
+    def get_return(self, date):
+        for name in self._old_order:
+            data = self._dbbase.get_dataframe(name, begin=date, end=date)
+            close_price = data.close.values[-1]
+            self._old_order[name].current_price = close_price
+            self._old_order[name].return_rate = (self._old_order[name].current_price
+                                                 - self._old_order[name].buy_price)/\
+                                                self._old_order[name].buy_price
+
+    def get_stock_asset(self):
+        return self._old_order
 
 
 if __name__ == "__main__":
