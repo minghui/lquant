@@ -239,6 +239,7 @@ class BackTestBase(object):
         context.asset_code = name
         context.market = self._market
         order = self._strategy.if_buy(context)
+        print "this is the cash this account have: ", self._account.cash
         print order
         if order is not None:
             self._account.buy(order, self._market)

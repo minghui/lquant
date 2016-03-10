@@ -78,6 +78,7 @@ class Account(Configurable):
                 self._new_order[order.name] += order
             else:
                 self._new_order[order.name] = order
+            self._cash = self._cash - order.buy_price*order.number*100
         else:
             return False
 
@@ -102,6 +103,7 @@ class Account(Configurable):
             self._order_book.add_order(order)
             self._stock_asset[order.name] += order
             self._old_order[order.name] += order
+            self._cash += order.current_price*order.number*100
             return True
         else:
             return False
@@ -140,8 +142,8 @@ class Account(Configurable):
         """
         for key in self._stock_asset:
             stock_asset = self._stock_asset[key]
-            data = self._dbbase.get(stock_asset.name, date)
-            stock_asset.current_price = data
+            data = self._dbbase.select_data_by_number(stock_asset.name, 1, date)
+            stock_asset.current_price = data[4]
 
     def get_return(self, date):
         for name in self._old_order:

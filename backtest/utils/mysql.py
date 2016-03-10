@@ -57,8 +57,9 @@ class MySQLUtils(DBBase):
             try:
                 self.cur.execute(sql_line, (id, d[0].__str__(), d[1], d[2], d[3], d[4], np.log(d[5]), np.log(d[6])))
             except MySQLdb.Error as e:
-                print e
-                print 'already in the database'
+                pass
+                # print e
+                # print 'already in the database'
         self.db.commit()
 
     def insert_single_data(self, data):
@@ -69,8 +70,9 @@ class MySQLUtils(DBBase):
         try:
             self.cur.execute(sql_line, data)
         except MySQLdb.Error as e:
-            print e
-            print 'already in the database'
+            pass
+            # print e
+            # print 'already in the database'
         self.db.commit()
 
     def execute_sql(self, sql_line):
@@ -99,7 +101,7 @@ class MySQLUtils(DBBase):
         else:
             sql_line = """select DD, START, HIGH, LOW, CLOSE, VOLUME, DEAL from {source} where ID = '{id}' and
  DD >= '{begin}' and DD <= '{end}' """.format(id=id, begin=begin, end=end, source=source)
-        print sql_line
+        # print sql_line
         return self.execute_sql(sql_line)
 
     def get_cur(self):
@@ -144,7 +146,7 @@ class MySQLUtils(DBBase):
  {source} where id = '{id}' and dd <= '{end_date}' order by
 dd desc limit {number}""".format(source=self.source, end_date=end_date,
                                  number=number, id=id)
-        print sql_str
+        # print sql_str
         data = self.execute_sql(sql_str)
         return np.array(data)
 

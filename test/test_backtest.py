@@ -66,16 +66,21 @@ class MaStrategy(StrategyBase):
         low = data_frame.low.values[-1]
         price = data_frame.close.values[-1]
         print ma60_value
-        if (low - ma60_value) / ma60_value >= 0.2:
+        print price
+
+        if (ma60_value - low) / ma60_value >= 0.1:
             number = np.floor(context.account.cash/(price*100))
-            return Order(name=context.asset_code, date=context.date, price=price, number=number, buy=True)
+            return Order(name=context.asset_code, date=context.date,
+                         price=price, number=number, buy=True)
 
     def if_sell(self, context):
         context.account.get_return(context.date)
         stock_asset = context.account.get_stock_asset()
         for name in stock_asset:
-            if stock_asset[name].return_rate > 0.06 or stock_asset[name].return_rate <= -0.03:
-                return Order(date=context.date, price=stock_asset[name].current_price,
+            if stock_asset[name].return_rate > 0.06 or \
+                            stock_asset[name].return_rate <= -0.03:
+                return Order(date=context.date,
+                             price=stock_asset[name].current_price,
                              sell=True)
         return None
 
