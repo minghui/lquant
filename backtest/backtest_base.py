@@ -244,9 +244,16 @@ class BackTestBase(object):
         if order is not None:
             self._account.buy(order, self._market)
         order = self._strategy.if_sell(context)
+        print 'sell order: ', order
         if order is not None:
             self._account.sell(order, self._market)
         self._account.after_market(date)
+        return_rate = self._account.get_return(date)
+
+        if return_rate is not None:
+            for name in return_rate:
+                print name, ": ", return_rate[name].return_rate
+
 
     def test_high_freq(self):
         pass

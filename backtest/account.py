@@ -91,7 +91,8 @@ class Account(Configurable):
         """
         if market is None:
             raise ValueError("Invalid market")
-
+        print "This is order name :", order.name
+        print self._old_order
         # Check if order in the old order
         if order.name not in self._old_order:
             raise ValueError("Do not have such stock asset")
@@ -103,7 +104,7 @@ class Account(Configurable):
             self._order_book.add_order(order)
             self._stock_asset[order.name] += order
             self._old_order[order.name] += order
-            self._cash += order.current_price*order.number*100
+            self._cash += order.buy_price*order.number*100
             return True
         else:
             return False

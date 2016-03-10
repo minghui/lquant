@@ -87,8 +87,9 @@ class MaStrategy(StrategyBase):
             print name
             if stock_asset[name].return_rate > 0.06 or \
                             stock_asset[name].return_rate <= -0.03:
-                return Order(date=context.date,
+                return Order(name=context.asset_code, date=context.date,
                              price=stock_asset[name].current_price,
+                             number=stock_asset[name].number,
                              sell=True)
         return None
 
