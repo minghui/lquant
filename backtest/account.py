@@ -115,8 +115,8 @@ class Account(Configurable):
         :return:
         """
         for key in self._stock_asset:
-            current_price = self._dbbase.get(key, date)
-            self._stock_asset[key].current_price = current_price
+            data = self._dbbase.get_dataframe(key, begin=date, end=date)
+            self._stock_asset[key].current_price = data.close.values[-1]
         # Combine the old_order and new_order
         for name in self._new_order:
             if name in self._old_order:
@@ -142,8 +142,9 @@ class Account(Configurable):
         """
         for key in self._stock_asset:
             stock_asset = self._stock_asset[key]
-            data = self._dbbase.select_data_by_number(stock_asset.name, 1, date)
-            stock_asset.current_price = data[4]
+            data = self._dbbase.get_dataframe(stock_asset.name, begin=date,
+                                              end=date)
+            stock_asset.current_price = data.close.values[-1]
 
     def get_return(self, date):
         for name in self._old_order:

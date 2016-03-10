@@ -1,4 +1,4 @@
-test_list: [sh600741, sh601668, sh601088]
+test_list: [sh601668]
 date_type: "%Y-%m-%d"
 database:
   name: mysql
