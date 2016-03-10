@@ -106,6 +106,7 @@ class OHLCVD(object):
         self.data_frame = pd.DataFrame(data=ma,
                                        columns=self.columns,
                                        index=self.data_frame.date)
+        self.data = self.data_frame.values
         return True
 
     def add_sar(self):
@@ -147,9 +148,7 @@ class OHLCVD(object):
         result = np.array([np.nan] + result.tolist())
         result = result.reshape(result.shape[0], 1)
         self.data = np.hstack((self.data, result))
-        print self.columns
         self.columns.append("raise_rate")
-        print self.columns
         self.data_frame = pd.DataFrame(data=self.data,
                                        columns=self.columns,
                                        index=self.data_frame.date)

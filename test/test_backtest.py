@@ -57,25 +57,27 @@ class MaStrategy(StrategyBase):
         StrategyBase.__init__(self)
 
     def if_buy(self, context):
-        data = context.db.select_data_by_number(70, context.date)
+        data = context.db.select_data_by_number(context.asset_code, 70, context.date)
         ohlc = OHLCVD(data)
         ohlc.add_ma(60)
         ohlc.add_ma(10)
         data_frame = ohlc.get_dataframe()
-        ma60_value = data_frame.m60.values[-1]
+        ma60_value = data_frame.ma60.values[-1]
         low = data_frame.low.values[-1]
         price = data_frame.close.values[-1]
+        print ma60_value
         if (low - ma60_value) / ma60_value >= 0.2:
             number = np.floor(context.account.cash/(price*100))
-            return Order(date=context.date, price=price, number=number, buy=True)
+            return Order(name=context.asset_code, date=context.date, price=price, number=number, buy=True)
 
-    def is_sell(self, context):
+    def if_sell(self, context):
         context.account.get_return(context.date)
         stock_asset = context.account.get_stock_asset()
         for name in stock_asset:
-            if stock_asset[name].return_rate > 0.06 or stock_asset[name].return_rate  <= -0.03:
+            if stock_asset[name].return_rate > 0.06 or stock_asset[name].return_rate <= -0.03:
                 return Order(date=context.date, price=stock_asset[name].current_price,
-                             sell=False)
+                             sell=True)
+        return None
 
 
 if __name__ == '__main__':

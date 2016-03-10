@@ -11,6 +11,7 @@ class Context(object):
         self.account = None
         self.db = None
         self.date = None
+        self.asset_code = None
 
 
 if __name__ == "__main__":

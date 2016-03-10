@@ -26,3 +26,6 @@ class OrderBook(Configurable):
 
     def reject(self):
         pass
+
+    def add_order(self, order):
+        pass

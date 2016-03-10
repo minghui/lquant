@@ -20,6 +20,14 @@ class Account(Configurable):
         self._old_order = {}
         self._dbbase = database
 
+    @property
+    def cash(self):
+        return self._cash
+
+    @cash.setter
+    def cash(self, cash):
+        self._cash = cash
+
     def init_from_config(self, config, **kwargs):
         if self.this_key in config:
             config_dict = config[self.this_key]
@@ -56,7 +64,7 @@ class Account(Configurable):
     def buy(self, order, market=None):
         if market is None:
             raise ValueError("Invalid market")
-        if order.cost > self._cash:
+        if order.buy_price*order.number > self._cash:
             raise ValueError("Do not have so much money")
         if market.process_order(order):
             self._order_book.add_order(order)

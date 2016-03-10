@@ -133,7 +133,7 @@ class MySQLUtils(DBBase):
         self._end_date = end_date
         self._end_date_set = True
 
-    def select_data_by_number(self, number, end_date):
+    def select_data_by_number(self, id, number, end_date):
         """
         Select data by number.
         :param number:
@@ -141,9 +141,10 @@ class MySQLUtils(DBBase):
         :return:
         """
         sql_str = """ select DD, START, HIGH, LOW, CLOSE, VOLUME, DEAL from
- {source} where date <= {end_date} order by
-date desc limit {number}""".format(source=self.source, end_date=end_date,
-                                 number=number)
+ {source} where id = '{id}' and dd <= '{end_date}' order by
+dd desc limit {number}""".format(source=self.source, end_date=end_date,
+                                 number=number, id=id)
+        print sql_str
         data = self.execute_sql(sql_str)
         return np.array(data)
 
@@ -155,8 +156,8 @@ date desc limit {number}""".format(source=self.source, end_date=end_date,
         :return:
         """
         sql_str = """ select DD, START, HIGH, LOW, CLOSE, VOLUME, DEAL
-  from {source} where date >= {begin_date} and
- date <= {end_date}""".format(source=self.source, begin_date=begin_date,
+  from {source} where dd >= {begin_date} and
+ dd <= {end_date}""".format(source=self.source, begin_date=begin_date,
                               end_date=end_date)
         data = self.execute_sql(sql_str)
         return data

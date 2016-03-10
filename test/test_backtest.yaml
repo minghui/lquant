@@ -1,10 +1,10 @@
-test_list: [600741, 601668, 601088]
+test_list: [sh600741, sh601668, sh601088]
 date_type: "%Y-%m-%d"
 database:
   name: mysql
   user: root
   passwd: 1988
-  database: stock
+  database: test
   source: STOCK
 query_type: day # minute
 need_data_length: 5days

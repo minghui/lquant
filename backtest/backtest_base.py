@@ -15,8 +15,7 @@ from backtest.utils.rds import RDSDB
 from datetime import datetime, timedelta
 from backtest.context import  Context
 from backtest.account import Account
-from backtest.order_book import  OrderBook
-from data.order import Order
+from backtest.market import Market
 
 
 DATA_NEED = {
@@ -96,8 +95,8 @@ class BackTestBase(object):
         self._trade_strategy = None
         self._date_type = config['date_type']
         self._tax = config["tax"]
-        self._market = None
-        self._account = None
+        self._market = Market()
+        self._account = Account(self._cash, self._database)
 
     def init(self, strategy=None, trade_strategy=None, analysis=None):
         """
@@ -238,12 +237,15 @@ class BackTestBase(object):
         context.date = date
         context.db = self._database
         context.asset_code = name
+        context.market = self._market
         order = self._strategy.if_buy(context)
+        print order
         if order is not None:
-            self._account.buy(order)
+            self._account.buy(order, self._market)
+            return
         order = self._strategy.if_sell(context)
         if order is not None:
-            self._account.sell(order)
+            self._account.sell(order, self._market)
 
     def test_high_freq(self):
         pass

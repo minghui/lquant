@@ -27,4 +27,10 @@ class Market(Configurable):
         self._account = Account()
         self._order_book = OrderBook()
 
+    def process_order(self, order):
+        return True
+
+    def reject(self, order):
+        pass
+
 
