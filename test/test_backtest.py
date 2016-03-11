@@ -67,12 +67,17 @@ class MaStrategy(StrategyBase):
         price = data_frame.close.values[-1]
         print ma60_value
         print price
+        tax_processor = context.tax_processor
 
         if (ma60_value - low) / ma60_value >= 0.1:
-            number = np.floor(context.account.cash/(price*100))
-            if number > 0:
-                return Order(name=context.asset_code, date=context.date,
-                             price=price, number=number, buy=True)
+            order = context.account.create_order(name=context.asset_code,
+                                                 price=price,
+                                                 date=context.date,
+                                                 tax_processor=tax_processor,
+                                                 position=1.0
+                                                 )
+            if order.number > 0:
+                return order
             else:
                 return None
         return None
