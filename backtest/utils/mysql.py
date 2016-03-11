@@ -16,7 +16,8 @@ from data.ohlc import OHLCVD
 
 def rec_sql(data, headers=None):
     if headers == None:
-        headers = [('date', datetime.date), ('open', float), ('high', float), ('low', float), ('close', float),
+        headers = [('date', datetime.date), ('open', float), ('high', float),
+                   ('low', float), ('close', float),
                    ('volume', float), ('deal', float)]
 
     data = np.array(data, dtype=headers)

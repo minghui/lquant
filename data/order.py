@@ -36,6 +36,8 @@ class Order(object):
             raise ValueError('Must a Record class')
         if self.name == order.name:
             # FIXME: This is bullshit.
+            if self.sell:
+                return self - order
             price = (self.number*self.buy_price+self.tax+order.tax+
                      order.number*order.buy_price)/(self.number+order.number)
             number = self.number + order.number
@@ -64,7 +66,7 @@ class Order(object):
                 # self.price = (self.price*self.number - return_value)/self.number
                 price = (self.buy_price*self.number - return_value)/self.number
             else:
-                # self.price = -return_value/record.number
+                # self.price = -retu  rn_value/record.number
                 price = -return_value/order.number
             return Order(name=self.name, price=price, number=number,
                           tax=self.tax, date=self.date, buy=self.buy,
