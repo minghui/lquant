@@ -26,7 +26,8 @@ def rec_sql(data, headers=None):
 
 class MySQLUtils(DBBase):
     """
-    This class is used to get data from mysql database, maybe I show use sqlachemy instead.
+    This class is used to get data from mysql database, maybe I show use
+    sqlachemy instead.
     """
 
     def __init__(self, user, passwd, dbname, source):
@@ -35,16 +36,19 @@ class MySQLUtils(DBBase):
         self.passwd = passwd
         self.dbname = dbname
         self.source = source
-        self.db = MySQLdb.connect(user=self.user, passwd=self.passwd, db=self.dbname, charset='utf8')
+        self.db = MySQLdb.connect(user=self.user, passwd=self.passwd,
+                                  db=self.dbname, charset='utf8')
         self.cur = self.db.cursor()
-        self._column_name = ["date", "open", "high", "low", "close", "volume", "deal"]
+        self._column_name = ["date", "open", "high", "low", "close", "volume",
+                             "deal"]
         self._end_date = None
         self._end_date_set = False
 
     def create_db(self, stock_name):
         # self.stock_name = stock_name
         sql_line = '''
- create table if not exists STOCK(ID VARCHAR(20), DD DATE, START FLOAT, HIGH FLOAT, LOW FLOAT, CLOSE FLOAT, VOLUME FLOAT, DEAL FLOAT)'''
+ create table if not exists STOCK(ID VARCHAR(20), DD DATE, START FLOAT,
+  HIGH FLOAT, LOW FLOAT, CLOSE FLOAT, VOLUME FLOAT, DEAL FLOAT)'''
         self.cur.execute(sql_line)
         self.cur.execute("alter table STOCK add unique index(ID, DD)")
         self.db.commit()
@@ -55,7 +59,9 @@ class MySQLUtils(DBBase):
         sql_line = """INSERT INTO STOCK VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"""
         for d in data:
             try:
-                self.cur.execute(sql_line, (id, d[0].__str__(), d[1], d[2], d[3], d[4], np.log(d[5]), np.log(d[6])))
+                self.cur.execute(sql_line, (id, d[0].__str__(), d[1],
+                                            d[2], d[3], d[4], np.log(d[5]),
+                                            np.log(d[6])))
             except MySQLdb.Error as e:
                 pass
                 # print e
@@ -66,7 +72,8 @@ class MySQLUtils(DBBase):
         '''
         insert one single data into the database
         '''
-        sql_line = """INSERT INTO STOCK VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"""
+        sql_line = """INSERT INTO STOCK VALUES(%s, %s, %s, %s, %s,
+ %s, %s, %s)"""
         try:
             self.cur.execute(sql_line, data)
         except MySQLdb.Error as e:
@@ -96,11 +103,14 @@ class MySQLUtils(DBBase):
             else:
                 id = 'sz' + id
         if begin is None:
-            sql_line = '''select DD, START, HIGH, LOW, CLOSE, VOLUME, DEAL from {source} where ID = '{id}' '''.\
+            sql_line = '''select DD, START, HIGH, LOW, CLOSE, VOLUME, DEAL from
+{source} where ID = '{id}' '''.\
                 format(id=id, source=source)
         else:
-            sql_line = """select DD, START, HIGH, LOW, CLOSE, VOLUME, DEAL from {source} where ID = '{id}' and
- DD >= '{begin}' and DD <= '{end}' """.format(id=id, begin=begin, end=end, source=source)
+            sql_line = """select DD, START, HIGH, LOW, CLOSE, VOLUME, DEAL
+from {source} where ID = '{id}' and
+ DD >= '{begin}' and DD <= '{end}'
+ """.format(id=id, begin=begin, end=end, source=source)
         # print sql_line
         return self.execute_sql(sql_line)
 
@@ -124,7 +134,8 @@ class MySQLUtils(DBBase):
         result = self.select_data(id, begin=begin, end=end)
 
     def get_work_days(self, id, begin=None, end=None, **kwargs):
-        result = self.execute_sql("select DISTINCT dd from {source} where dd >='{begin}' and dd <= '{end}'".format(
+        result = self.execute_sql("""select DISTINCT dd from {source} where
+dd >='{begin}' and dd <= '{end}'""".format(
             source=self.source,
             begin=begin,
             end=end))
@@ -164,9 +175,14 @@ dd desc limit {number}""".format(source=self.source, end_date=end_date,
         data = self.execute_sql(sql_str)
         return data
 
+    def select_current_price(self, date):
+        pass
+
+
 if __name__ == '__main__':
     stock_db = MySQLUtils('root', '1988', 'test', 'stock')
-    result = stock_db.select_data('sh600741', begin='2015-10-10', end='2015-11-11')
+    result = stock_db.select_data('sh600741', begin='2015-10-10',
+                                  end='2015-11-11')
     print result
     result_time = [str(x[0]) for x in result]
     print result_time
