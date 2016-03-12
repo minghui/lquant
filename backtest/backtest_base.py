@@ -16,6 +16,7 @@ from datetime import datetime, timedelta
 from backtest.context import  Context
 from backtest.account import Account
 from backtest.market import Market
+from backtest.utils.tax import TaxProcessor
 
 
 DATA_NEED = {
@@ -97,6 +98,8 @@ class BackTestBase(object):
         self._tax = config["tax"]
         self._market = Market()
         self._account = Account(self._cash, self._database)
+        self._tax_processor = TaxProcessor()
+        self._tax_processor.init_from_config(config)
 
     def init(self, strategy=None, trade_strategy=None, analysis=None):
         """
@@ -238,6 +241,7 @@ class BackTestBase(object):
         context.db = self._database
         context.asset_code = name
         context.market = self._market
+        context.tax_processor = self._tax_processor
         order = self._strategy.if_buy(context)
         print "this is the cash this account have: ", self._account.cash
         print order

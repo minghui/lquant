@@ -9,7 +9,10 @@ database:
   source: STOCK
 query_type: day # minute
 need_data_length: 5days
-tax: 0.001
+tax:
+  broker_tax: 0.00025
+  stamp_tax: 0.001
+
 trade_strategy:
   peroid: 5days # days minutes
 cash: 100000

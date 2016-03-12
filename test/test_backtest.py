@@ -57,7 +57,8 @@ class MaStrategy(StrategyBase):
         StrategyBase.__init__(self)
 
     def if_buy(self, context):
-        data = context.db.select_data_by_number(context.asset_code, 70, context.date)
+        data = context.db.select_data_by_number(context.asset_code, 70,
+                                                context.date)
         ohlc = OHLCVD(data)
         ohlc.add_ma(60)
         ohlc.add_ma(10)
@@ -70,7 +71,7 @@ class MaStrategy(StrategyBase):
         tax_processor = context.tax_processor
 
         if (ma60_value - low) / ma60_value >= 0.1:
-            order = context.account.create_order(name=context.asset_code,
+            order = context.account.create_buy_order(name=context.asset_code,
                                                  price=price,
                                                  date=context.date,
                                                  tax_processor=tax_processor,

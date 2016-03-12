@@ -42,7 +42,7 @@ def max_buy_number(fund, price, tax):
     return number
 
 
-class Tax(object):
+class TaxProcessor(object):
     key_this = "tax"
     key_stamp_tax = "stamp_tax"
     key_broker_tax = "broker_tax"
@@ -54,15 +54,15 @@ class Tax(object):
     def init_from_config(self, config):
         if self.key_this in config:
             this_config = config[self.key_this]
-            self._stamp_tax = this_config[self.key_stamp_tax_]
+            self._stamp_tax = this_config[self.key_stamp_tax]
             self._broker_tax = this_config[self.key_broker_tax]
         else:
             raise ValueError("Do not has {key} key".format(key=self.key_this))
 
-    def calculate_tax(self, order):
+    def calculate_tax(self, price, cash):
         """
-        Input is order.
-        :param order:
+        Calculate the price with tax.
+        :param price:
         :return:
         """
-        return
+        return price*(1+self._broker_tax+self._stamp_tax)

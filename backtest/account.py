@@ -161,9 +161,9 @@ class Account(Configurable):
     def get_stock_asset(self):
         return self._old_order
 
-    def create_order(self, name, price, date, tax_processor, position=1.0):
+    def create_buy_order(self, name, price, date, tax_processor, position=1.0):
         """
-        This function is used to create order by some parameter.
+        This function is used to create buy order by some parameter.
         :param name:
         :param price:
         :param tax_processor:
@@ -172,11 +172,23 @@ class Account(Configurable):
         """
 
         used_cash = self._cash * position
-        buy_price = tax_processor(price)
+        buy_price = tax_processor.calculate_tax(price, used_cash)
         number = np.floor(used_cash/buy_price)
         order = Order(name=name, price=buy_price, date=date, number=number,
                       buy=True)
         return order
+
+    def create_sell_order(self, name, price, date, tax_processor, position=1.0):
+        """
+        This function is used to create sell order by some parameter.
+        :param name:
+        :param price:
+        :param date:
+        :param tax_processor:
+        :param position:
+        :return:
+        """
+        raise Exception('Unimplement Error')
 
 if __name__ == "__main__":
     pass
