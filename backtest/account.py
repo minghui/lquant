@@ -154,9 +154,11 @@ class Account(Configurable):
             data = self._dbbase.get_dataframe(name, begin=date, end=date)
             close_price = data.close.values[-1]
             self._old_order[name].current_price = close_price
-            self._old_order[name].return_rate = (self._old_order[name].current_price
-                                                 - self._old_order[name].buy_price)/\
-                                                self._old_order[name].buy_price
+            self._old_order[name].return_rate = (self._old_order[name]
+                                                 .current_price
+                                                 - self._old_order[name]
+                                                 .buy_price/self
+                                                 ._old_order[name].buy_price)
 
     def get_stock_asset(self):
         return self._old_order

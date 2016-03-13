@@ -2,11 +2,18 @@
 
 
 class Order(object):
+    """
+    Order class is used to save the buy or sell order, but now I have a problem
+    if I should add the current price to the order structure. If added. I should
+    add current_date too. At the same time, tax is a problem, it is a little
+    tick to calculate the tax.
+    """
 
     def __init__(self, name=None, price=None, number=None, tax=0, date=None,
                  buy=False, sell=False, **kwargs):
         """
-        This is the record class which is used to save the record of every buy or sell event.
+        This is the record class which is used to save the record of every buy
+        or sell event.
         :param name:
         :param price: This is the cost price.
         :param number: stock number
@@ -41,7 +48,8 @@ class Order(object):
             price = (self.number*self.buy_price+self.tax+order.tax+
                      order.number*order.buy_price)/(self.number+order.number)
             number = self.number + order.number
-            # FIXME: Should not return self, but a new record. Here should change.
+            # FIXME: Should not return self, but a new record.
+            # Here should change.
             return Order(name=self.name, price=price, tax=self.tax,
                          number=number, date=self.date, buy=self.buy,
                          sell=self.buy)
@@ -63,14 +71,15 @@ class Order(object):
             # self.number -= record.number
             number = self.number - order.number
             if self.number != 0:
-                # self.price = (self.price*self.number - return_value)/self.number
+                # self.price = (self.price*self.number
+                # - return_value)/self.number
                 price = (self.buy_price*self.number - return_value)/self.number
             else:
                 # self.price = -retu  rn_value/record.number
                 price = -return_value/order.number
             return Order(name=self.name, price=price, number=number,
-                          tax=self.tax, date=self.date, buy=self.buy,
-                          sell=self.buy)
+                         tax=self.tax, date=self.date, buy=self.buy,
+                         sell=self.buy)
         else:
             raise ValueError('Only same stock can sub.')
 
