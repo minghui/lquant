@@ -7,7 +7,11 @@ import numpy as np
 
 
 class Account(Configurable):
-
+    """
+    This is the core class in the simulator, since account is the center of
+    my framework, it connect the market and the algorithm(which is human in
+    general). So this class must be well designed.
+    """
     def set_to_context(self, context):
         pass
 
@@ -15,11 +19,21 @@ class Account(Configurable):
         pass
 
     def __init__(self, cash, database):
+        """
+        In order to simualte the T+1 market, in this class, I have added the
+        old order and the new order variable. The new order is the order deal
+        today, so it can not sell immediately. After every day, new order and
+        the old order will be combine together, and the new order will be empty.
+        :param cash:
+        :param database:
+        :return:
+        """
         self._cash = cash
         self._stock_asset = {}
         self._order_book = OrderBook()
         self._new_order = {}
         self._old_order = {}
+        # Account should have ability to connect the database.
         self._dbbase = database
 
     @property
@@ -31,6 +45,12 @@ class Account(Configurable):
         self._cash = cash
 
     def init_from_config(self, config, **kwargs):
+        """
+        Read config from the main config file.
+        :param config:
+        :param kwargs:
+        :return:
+        """
         if self.this_key in config:
             config_dict = config[self.this_key]
         else:
@@ -80,7 +100,7 @@ class Account(Configurable):
                 self._new_order[order.name] += order
             else:
                 self._new_order[order.name] = order
-            self._cash = self._cash - order.buy_price*order.number*100
+            self._cash = self._cash-order.buy_price*order.number*100
         else:
             return False
 
@@ -150,6 +170,11 @@ class Account(Configurable):
             stock_asset.current_price = data.close.values[-1]
 
     def get_return(self, date):
+        """
+        Get every stock asset's return, may be I should remove this method.
+        :param date:
+        :return:
+        """
         for name in self._old_order:
             data = self._dbbase.get_dataframe(name, begin=date, end=date)
             close_price = data.close.values[-1]
@@ -163,7 +188,7 @@ class Account(Configurable):
     def get_stock_asset(self):
         return self._old_order
 
-    def create_buy_order(self, name, price, date, tax_processor, position=1.0):
+    def create_buy_order(self, name, price, context, position=1.0):
         """
         This function is used to create buy order by some parameter.
         :param name:
@@ -174,9 +199,10 @@ class Account(Configurable):
         """
 
         used_cash = self._cash * position
-        buy_price = tax_processor.calculate_tax(price, used_cash)
+        buy_price = context.tax_processor.calculate_tax(price, used_cash)
         number = np.floor(used_cash/buy_price)
-        order = Order(name=name, price=buy_price, date=date, number=number,
+        order = Order(name=name, price=buy_price, date=context.date,
+                      number=number,
                       buy=True)
         return order
 
