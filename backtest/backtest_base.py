@@ -251,7 +251,7 @@ class BackTestBase(object):
         print 'sell order: ', order
         if order is not None:
             self._account.sell(order, self._market)
-        self._account.after_market(date)
+        self._account._after_market(date)
         return_rate = self._account.get_return(date)
 
         if return_rate is not None:

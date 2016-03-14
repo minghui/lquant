@@ -131,7 +131,7 @@ class Account(Configurable):
         else:
             return False
 
-    def after_market(self, date):
+    def _after_market(self, date):
         """
         Process the data after the market close.
         :param date: type str

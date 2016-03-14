@@ -72,11 +72,9 @@ class MaStrategy(StrategyBase):
 
         if (ma60_value - low) / ma60_value >= 0.1:
             order = context.account.create_buy_order(name=context.asset_code,
-                                                 price=price,
-                                                 date=context.date,
-                                                 tax_processor=tax_processor,
-                                                 position=1.0
-                                                 )
+                                                     price=price,
+                                                     context=context
+                                                     )
             if order.number > 0:
                 return order
             else:
