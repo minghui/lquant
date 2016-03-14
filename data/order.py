@@ -43,7 +43,7 @@ class Order(object):
             raise ValueError('Must a Record class')
         if self.name == order.name:
             # FIXME: This is bullshit.
-            if self.sell:
+            if order.sell:
                 return self - order
             price = (self.number*self.buy_price+self.tax+order.tax+
                      order.number*order.buy_price)/(self.number+order.number)
@@ -111,8 +111,10 @@ class Order(object):
 if __name__ == '__main__':
     order = Order(name='test', number=200.0, price=10.0, tax=5, buy=True)
     print order
-    record1 = Order(name='test', number=100.0, price=15.0, tax=5, buy=True)
+    record1 = Order(name='test', number=100.0, price=15.0, tax=5, sell=True)
     result = order-record1
+    result2 = order + record1
+    print "This is the result 2:", result2
     print result
     print order
     result = order + record1
