@@ -199,14 +199,14 @@ class Account(Configurable):
         """
 
         used_cash = self._cash * position
-        buy_price = context.tax_processor.calculate_tax(price, used_cash)
-        number = np.floor(used_cash/buy_price)
+        buy_price = context.tax_processor.calculate_tax(price)
+        number = np.floor(used_cash/(buy_price*100))
         order = Order(name=name, price=buy_price, date=context.date,
                       number=number,
                       buy=True)
         return order
 
-    def create_sell_order(self, name, price, date, tax_processor, position=1.0):
+    def create_sell_order(self, name, price, context, position=1.0):
         """
         This function is used to create sell order by some parameter.
         :param name:
@@ -216,7 +216,13 @@ class Account(Configurable):
         :param position:
         :return:
         """
-        raise Exception('Unimplement Error')
+        if name not in self._old_order[name]:
+            raise ValueError('Stock not in the order list')
+        order = self._old_order[name]
+        sell_price = context.tax_processor_calculate_sell_tax(price)
+        sell_number = np.floor(order.number*position)
+        return Order(name=name, price=sell_price, date=context.date,
+                     number=sell_number, sell=True)
 
 if __name__ == "__main__":
     pass

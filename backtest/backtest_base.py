@@ -13,7 +13,7 @@ import pandas as pd
 # from matplotlib import pylab as plt
 from backtest.utils.rds import RDSDB
 from datetime import datetime, timedelta
-from backtest.context import  Context
+from backtest.context import Context
 from backtest.account import Account
 from backtest.market import Market
 from backtest.utils.tax import TaxProcessor

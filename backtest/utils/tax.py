@@ -44,25 +44,39 @@ def max_buy_number(fund, price, tax):
 
 class TaxProcessor(object):
     key_this = "tax"
-    key_stamp_tax = "stamp_tax"
-    key_broker_tax = "broker_tax"
+    key_buy_stamp_tax = "buy_stamp_tax"
+    key_buy_broker_tax = "buy_broker_tax"
+    key_sell_stamp_tax = "sell_stamp_tax"
+    key_sell_broker_tax = "sell_broker_tax"
 
     def __init__(self):
-        self._stamp_tax = None
-        self._broker_tax = None
+        self._buy_stamp_tax = None
+        self._buy_broker_tax = None
+        self._sell_stamp_tax = None
+        self._sell_broker_tax = None
 
     def init_from_config(self, config):
         if self.key_this in config:
             this_config = config[self.key_this]
-            self._stamp_tax = this_config[self.key_stamp_tax]
-            self._broker_tax = this_config[self.key_broker_tax]
+            self._buy_stamp_tax = this_config[self.key_buy_stamp_tax]
+            self._buy_broker_tax = this_config[self.key_buy_broker_tax]
+            self._sell_stamp_tax = this_config[self.key_sell_stamp_tax]
+            self._sell_broker_tax = this_config[self.key_sell_broker_tax]
         else:
             raise ValueError("Do not has {key} key".format(key=self.key_this))
 
-    def calculate_tax(self, price, cash):
+    def calculate_buy_tax(self, price):
         """
         Calculate the price with tax.
         :param price:
         :return:
         """
         return price*(1+self._broker_tax+self._stamp_tax)
+
+    def calculate_sell_tax(self, price):
+        """
+        Calculate sell tax. Not that sample.
+        :param price:
+        :return:
+        """
+        return price
