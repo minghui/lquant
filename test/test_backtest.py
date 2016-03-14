@@ -66,10 +66,10 @@ class MaStrategy(StrategyBase):
         ma60_value = data_frame.ma60.values[-1]
         low = data_frame.low.values[-1]
         price = data_frame.close.values[-1]
-        print ma60_value
-        print price
-        tax_processor = context.tax_processor
-
+        print 'ma60 value:', ma60_value
+        print "current price :", price
+        rate = (ma60_value - low)/ma60_value
+        print "this is the rate of the ma60 minus low", rate
         if (ma60_value - low) / ma60_value >= 0.1:
             order = context.account.create_buy_order(name=context.asset_code,
                                                      price=price,
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
     console.setFormatter(formatter)
     logging.getLogger('').addHandler(console)
-    test_case = BackTestBase(config_file='./test_backtest.yaml', log=logging)
+    test_case = BackTestBase(config_file='./test_backtest_local.yaml', log=logging)
     test_strategy = CountStrategy()
     ma_strategy = MaStrategy()
     test_case.init(strategy=ma_strategy, analysis=analysis)

@@ -105,7 +105,7 @@ class MySQLUtils(DBBase):
                 id = 'sz' + id
         if begin is None:
             sql_line = '''select DD, START, HIGH, LOW, CLOSE, VOLUME, DEAL from
-{source} where ID = '{id}' '''.\
+{source} where ID = '{id}' '''. \
                 format(id=id, source=source)
         else:
             sql_line = """select DD, START, HIGH, LOW, CLOSE, VOLUME, DEAL
@@ -136,10 +136,11 @@ from {source} where ID = '{id}' and
 
     def get_work_days(self, id, begin=None, end=None, **kwargs):
         result = self.execute_sql("""select DISTINCT dd from {source} where
-dd >='{begin}' and dd <= '{end}'""".format(
+id = '{id}' and dd >='{begin}' and dd <= '{end}'""".format(
             source=self.source,
             begin=begin,
-            end=end))
+            end=end,
+            id=id))
         result = [x[0] for x in result]
         return result
 
@@ -147,9 +148,10 @@ dd >='{begin}' and dd <= '{end}'""".format(
         self._end_date = end_date
         self._end_date_set = True
 
-    def select_data_by_number(self, id, number, end_date):
+    def select_data_by_number(self, id, number, end_date, reversed=True):
         """
         Select data by number.
+        :type reversed: bool
         :param number:
         :param end_date:
         :return:
@@ -160,6 +162,8 @@ dd desc limit {number}""".format(source=self.source, end_date=end_date,
                                  number=number, id=id)
         # print sql_str
         data = self.execute_sql(sql_str)
+        if reversed:
+            data = data[::-1]
         return np.array(data)
 
     def select_data_by_date(self, begin_date, end_date):
@@ -172,7 +176,7 @@ dd desc limit {number}""".format(source=self.source, end_date=end_date,
         sql_str = """ select DD, START, HIGH, LOW, CLOSE, VOLUME, DEAL
   from {source} where dd >= {begin_date} and
  dd <= {end_date}""".format(source=self.source, begin_date=begin_date,
-                              end_date=end_date)
+                            end_date=end_date)
         data = self.execute_sql(sql_str)
         return data
 

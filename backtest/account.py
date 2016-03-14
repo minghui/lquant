@@ -4,6 +4,9 @@ from Configurable import Configurable
 from backtest.order_book import OrderBook
 from data.order import Order
 import numpy as np
+import logging
+
+logger = logging.getLevelName("main")
 
 
 class Account(Configurable):
@@ -176,14 +179,20 @@ class Account(Configurable):
         :return:
         """
         for name in self._old_order:
-            data = self._dbbase.get_dataframe(name, begin=date, end=date)
-            close_price = data.close.values[-1]
-            self._old_order[name].current_price = close_price
-            self._old_order[name].return_rate = (self._old_order[name]
-                                                 .current_price
-                                                 - self._old_order[name]
-                                                 .buy_price/self
-                                                 ._old_order[name].buy_price)
+            try:
+                print name, date
+                data = self._dbbase.get_dataframe(name, begin=date, end=date)
+                close_price = data.close.values[-1]
+                self._old_order[name].current_price = close_price
+                self._old_order[name].return_rate = (self._old_order[name]
+                                                     .current_price
+                                                     - self._old_order[name]
+                                                     .buy_price/self
+                                                     ._old_order[name].buy_price)
+            except Exception as e:
+                print e.message
+                print 'error at date:', date, ' name:', name
+
 
     def get_stock_asset(self):
         return self._old_order
@@ -199,7 +208,7 @@ class Account(Configurable):
         """
 
         used_cash = self._cash * position
-        buy_price = context.tax_processor.calculate_tax(price)
+        buy_price = context.tax_processor.calculate_buy_tax(price)
         number = np.floor(used_cash/(buy_price*100))
         order = Order(name=name, price=buy_price, date=context.date,
                       number=number,

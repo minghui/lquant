@@ -71,7 +71,7 @@ class TaxProcessor(object):
         :param price:
         :return:
         """
-        return price*(1+self._broker_tax+self._stamp_tax)
+        return price*(1+self._buy_broker_tax+self._buy_stamp_tax)
 
     def calculate_sell_tax(self, price):
         """
