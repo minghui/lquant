@@ -6,7 +6,7 @@ from data.order import Order
 import numpy as np
 import logging
 
-logger = logging.getLevelName("main")
+logger = logging.getLogger()
 
 
 class Account(Configurable):
@@ -134,6 +134,14 @@ class Account(Configurable):
         else:
             return False
 
+    def _before_market(self, date):
+        """
+        process the data before the market open.
+        :param date:
+        :return:
+        """
+        return None
+
     def _after_market(self, date):
         """
         Process the data after the market close.
@@ -151,14 +159,6 @@ class Account(Configurable):
                 self._old_order[name] = self._new_order[name]
             self._new_order = {}
         self._update_asset(date)
-
-    def _before_market(self, date):
-        """
-        process the data before the market open.
-        :param date:
-        :return:
-        """
-        return None
 
     def _update_asset(self, date):
         """
@@ -181,6 +181,8 @@ class Account(Configurable):
         for name in self._old_order:
             try:
                 print name, date
+                logger.info("name is {name}, date is {date}".format(name=name,
+                                                                    date=date))
                 data = self._dbbase.get_dataframe(name, begin=date, end=date)
                 close_price = data.close.values[-1]
                 self._old_order[name].current_price = close_price
@@ -190,9 +192,9 @@ class Account(Configurable):
                                                      .buy_price/self
                                                      ._old_order[name].buy_price)
             except Exception as e:
+                logger.exception(e.message)
                 print e.message
                 print 'error at date:', date, ' name:', name
-
 
     def get_stock_asset(self):
         return self._old_order
@@ -206,7 +208,7 @@ class Account(Configurable):
         :param position:
         :return:
         """
-
+        logger.info("create buy order at time {date}".format(date=context.date))
         used_cash = self._cash * position
         buy_price = context.tax_processor.calculate_buy_tax(price)
         number = np.floor(used_cash/(buy_price*100))

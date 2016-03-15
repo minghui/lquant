@@ -112,7 +112,7 @@ if __name__ == '__main__':
     formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
     console.setFormatter(formatter)
     logging.getLogger('').addHandler(console)
-    test_case = BackTestBase(config_file='./test_backtest_local.yaml', log=logging)
+    test_case = BackTestBase(config_file='./test_backtest.yaml', log=logging)
     test_strategy = CountStrategy()
     ma_strategy = MaStrategy()
     test_case.init(strategy=ma_strategy, analysis=analysis)

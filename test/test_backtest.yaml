@@ -10,8 +10,10 @@ database:
 query_type: day # minute
 need_data_length: 5days
 tax:
-  broker_tax: 0.00025
-  stamp_tax: 0.001
+  buy_broker_tax: 0.00025
+  buy_stamp_tax: 0.001
+  sell_broker_tax: 0.0001
+  sell_stamp_tax: 0.0001
 
 trade_strategy:
   peroid: 5days # days minutes

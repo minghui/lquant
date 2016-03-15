@@ -6,6 +6,9 @@ import pandas as pd
 import talib
 import codecs
 import yaml
+import logging
+
+logger = logging.getLogger("ohlc")
 
 """
 This file contain all the method used for parsing OHLC data.
