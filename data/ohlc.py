@@ -180,6 +180,22 @@ class OHLCVD(object):
         result = result.reshape(result.shape[0], 1)
         self._add_new_feature(result, "fall_days_"+str(n))
 
+    def add_jump_empty_down(self):
+        close_data = self.data_frame.close.values
+        open_data = self.data_frame.open.values
+        indicator = open_data[1:] - close_data[:-1]
+        indicator = (indicator < 0).astype(np.float64)
+        indicator = np.array([0] + indicator.tolist())
+        self._add_new_feature(indicator, "jump_empty_down")
+
+    def add_jump_empty_up(self):
+        close_data = self.data_frame.close.values
+        open_data = self.data_frame.open.values
+        indicator = open_data[1:] - close_data[:-1]
+        indicator = (indicator > 0).astype(np.float64)
+        indicator = np.array([0] + indicator.tolist())
+        self._add_new_feature(indicator, "jump_empty_up")
+
     def normalize(self):
         pass
 
@@ -197,6 +213,5 @@ class OHLCVD(object):
         self.data_frame = pd.DataFrame(data=self.data,
                                        columns=self.columns,
                                        index=self.data_frame.date)
-
 
 

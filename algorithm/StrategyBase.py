@@ -106,8 +106,8 @@ class StrategyBase(object):
         if record is not None and record.number > 0:
 
             sell_record = Order(name=name, date=date,
-                                 price=price, number=record.number,
-                                 tax=0, sell=True)
+                                price=price, number=record.number,
+                                tax=0, sell=True)
             print 'This is the sell record:', sell_record
             self._fund += record.number * price * 100*(1-tax)
             self.stock_asset.add_order(sell_record)

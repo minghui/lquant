@@ -131,7 +131,13 @@ class Account(Configurable):
         if market.process_order(order):
             self._order_book.add_order(order)
             self._stock_asset[order.name] += order
+            # clean the stock
+            if self._stock_asset[order.name].number == 0:
+                del self._stock_asset[order.name]
             self._old_order[order.name] += order
+            if self._old_order[order.name].number == 0:
+                del self._old_order[order.name]
+
             self._cash += order.buy_price*order.number*100
             return True
         else:
@@ -237,6 +243,17 @@ class Account(Configurable):
         sell_number = np.floor(order.number*position)
         return Order(name=name, price=sell_price, date=context.date,
                      number=sell_number, sell=True)
+
+    def get_cash(self):
+        """
+        get money we have.
+        :return:
+        """
+        total_cash = self._cash
+        for key in self._stock_asset:
+            asset = self._stock_asset[key]
+            total_cash += asset.current_price*asset.number*100
+        return total_cash
 
 if __name__ == "__main__":
     pass

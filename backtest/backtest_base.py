@@ -18,6 +18,8 @@ from backtest.account import Account
 from backtest.market import Market
 from backtest.utils.tax import TaxProcessor
 from backtest.utils.utils import get_module_logger
+from matplotlib import pylab as plt
+
 
 logger = get_module_logger(__name__)
 
@@ -131,8 +133,15 @@ class BackTestBase(object):
             work_days = self._database.get_work_days(stock,
                                                      begin=self._begin_date,
                                                      end=self._end_date)
+            asset_array = []
             for day in work_days:
                 self.test_low_freq(stock, day)
+                self._account.get_cash()
+                asset_array.append(self._account.get_cash())
+            data = pd.DataFrame(data=asset_array, index=work_days)
+            print data
+            data.plot()
+            plt.show()
         #         context = Context()
         #         context.db = self._database
         #         context.date = day
@@ -233,7 +242,7 @@ class BackTestBase(object):
         :param date:
         :return:
         """
-        logger.info(date)
+        # logger.info(date)
         # logger.info("test in low frequence")
         self._database.set_end_date(date)
         # Every time transform the date to the algorithm.
@@ -249,12 +258,12 @@ class BackTestBase(object):
         order = self._strategy.if_buy(context)
         # print "this is the cash this account have: ", self._account.cash
         if order is not None:
-            logger.info("generate order:", order)
+            logger.info("generate buy order:"+str(order))
             self._account.buy(order, self._market)
         order = self._strategy.if_sell(context)
         # print 'sell order: ', order
         if order is not None:
-            logger.info("generate sell order", order)
+            logger.info("generate sell order"+str(order))
             self._account.sell(order, self._market)
         self._account._after_market(date)
         return_rate = self._account.get_return(date)

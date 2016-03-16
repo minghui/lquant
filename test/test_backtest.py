@@ -7,6 +7,7 @@ from backtest.backtest_base import BackTestBase
 from algorithm.StrategyBase import StrategyBase
 from data.ohlc import OHLCVD
 from data.order import Order
+from backtest.utils.utils import get_module_logger
 
 
 class mystrategy(StrategyBase):
@@ -55,6 +56,7 @@ class MaStrategy(StrategyBase):
 
     def __init__(self):
         StrategyBase.__init__(self)
+        self.logger = get_module_logger("my")
 
     def if_buy(self, context):
         data = context.db.select_data_by_number(context.asset_code, 70,
@@ -69,6 +71,8 @@ class MaStrategy(StrategyBase):
         # print 'ma60 value:', ma60_value
         # print "current price :", price
         rate = (ma60_value - low)/ma60_value
+        self.logger.info("ma60 value :" + str(ma60_value) + " current price "+
+                         str(price)+" rate is :" + str(rate))
         # print "this is the rate of the ma60 minus low", rate
         if (ma60_value - low) / ma60_value >= 0.1:
             order = context.account.create_buy_order(name=context.asset_code,
@@ -78,6 +82,7 @@ class MaStrategy(StrategyBase):
             if order.number > 0:
                 return order
             else:
+                self.logger.info("can not create order")
                 return None
         return None
 
