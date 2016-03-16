@@ -66,10 +66,10 @@ class MaStrategy(StrategyBase):
         ma60_value = data_frame.ma60.values[-1]
         low = data_frame.low.values[-1]
         price = data_frame.close.values[-1]
-        print 'ma60 value:', ma60_value
-        print "current price :", price
+        # print 'ma60 value:', ma60_value
+        # print "current price :", price
         rate = (ma60_value - low)/ma60_value
-        print "this is the rate of the ma60 minus low", rate
+        # print "this is the rate of the ma60 minus low", rate
         if (ma60_value - low) / ma60_value >= 0.1:
             order = context.account.create_buy_order(name=context.asset_code,
                                                      price=price,
@@ -82,13 +82,13 @@ class MaStrategy(StrategyBase):
         return None
 
     def if_sell(self, context):
-        print context.asset_code
+        # print context.asset_code
         context.account.get_return(context.date)
         stock_asset = context.account.get_stock_asset()
-        print 'in sell process'
-        print 'the length of the stock:  ', len(stock_asset)
+        # print 'in sell process'
+        # print 'the length of the stock:  ', len(stock_asset)
         for name in stock_asset:
-            print name
+            # print name
             if stock_asset[name].return_rate > 0.06 or \
                             stock_asset[name].return_rate <= -0.03:
                 return Order(name=context.asset_code, date=context.date,

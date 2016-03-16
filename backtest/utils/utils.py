@@ -5,11 +5,10 @@ import logging
 
 def get_module_logger(mod_name):
     """
-  create log for different moduler
-  :param mod_name:
-  :return:
-  """
-
+    create logger
+    :param mod_name:
+    :return:
+    """
     logger = logging.getLogger(mod_name)
     handler = logging.StreamHandler()
     formatter = logging.Formatter(

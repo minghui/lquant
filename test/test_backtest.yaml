@@ -4,8 +4,8 @@ database:
   name: mysql
   user: root
   passwd: 1988
-  database: stock
-#  database: test
+#  database: stock
+  database: test
   source: STOCK
 query_type: day # minute
 need_data_length: 5days

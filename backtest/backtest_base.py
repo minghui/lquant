@@ -234,7 +234,7 @@ class BackTestBase(object):
         :return:
         """
         logger.info(date)
-        logger.info("test in low frequence")
+        # logger.info("test in low frequence")
         self._database.set_end_date(date)
         # Every time transform the date to the algorithm.
         #  Algorithm get the data it self, but we should make
@@ -247,13 +247,14 @@ class BackTestBase(object):
         context.market = self._market
         context.tax_processor = self._tax_processor
         order = self._strategy.if_buy(context)
-        print "this is the cash this account have: ", self._account.cash
-        print order
+        # print "this is the cash this account have: ", self._account.cash
         if order is not None:
+            logger.info("generate order:", order)
             self._account.buy(order, self._market)
         order = self._strategy.if_sell(context)
-        print 'sell order: ', order
+        # print 'sell order: ', order
         if order is not None:
+            logger.info("generate sell order", order)
             self._account.sell(order, self._market)
         self._account._after_market(date)
         return_rate = self._account.get_return(date)
@@ -261,7 +262,6 @@ class BackTestBase(object):
         if return_rate is not None:
             for name in return_rate:
                 print name, ": ", return_rate[name].return_rate
-
 
     def test_high_freq(self):
         pass

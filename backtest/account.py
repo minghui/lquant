@@ -183,9 +183,9 @@ class Account(Configurable):
         """
         for name in self._old_order:
             try:
-                print name, date
+                # print name, date
                 logger.debug("name is {name}, date is {date}".format(name=name,
-                                                                    date=date))
+                                                                     date=date))
                 data = self._dbbase.get_dataframe(name, begin=date, end=date)
                 close_price = data.close.values[-1]
                 self._old_order[name].current_price = close_price
