@@ -9,6 +9,9 @@ the market, such as T+1 or T+0
 from Configurable import Configurable
 from order_book import OrderBook
 from account import Account
+from backtest.utils.utils import get_module_logger
+
+logger = get_module_logger(__name__)
 
 
 class Market(Configurable):
@@ -28,6 +31,7 @@ class Market(Configurable):
         self._order_book = OrderBook()
 
     def process_order(self, order):
+        logger.info("process the order: ", order)
         return True
 
     def reject(self, order):

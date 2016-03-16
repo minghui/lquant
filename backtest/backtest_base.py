@@ -17,7 +17,9 @@ from backtest.context import Context
 from backtest.account import Account
 from backtest.market import Market
 from backtest.utils.tax import TaxProcessor
+from backtest.utils.utils import get_module_logger
 
+logger = get_module_logger(__name__)
 
 DATA_NEED = {
     "minute": 242,
@@ -231,6 +233,8 @@ class BackTestBase(object):
         :param date:
         :return:
         """
+        logger.info(date)
+        logger.info("test in low frequence")
         self._database.set_end_date(date)
         # Every time transform the date to the algorithm.
         #  Algorithm get the data it self, but we should make

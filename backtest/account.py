@@ -5,8 +5,11 @@ from backtest.order_book import OrderBook
 from data.order import Order
 import numpy as np
 import logging
+from backtest.utils.utils import get_module_logger
 
-logger = logging.getLogger()
+
+logger = get_module_logger(__name__)
+logger.info("init the loger from " + __name__)
 
 
 class Account(Configurable):
@@ -181,7 +184,7 @@ class Account(Configurable):
         for name in self._old_order:
             try:
                 print name, date
-                logger.info("name is {name}, date is {date}".format(name=name,
+                logger.debug("name is {name}, date is {date}".format(name=name,
                                                                     date=date))
                 data = self._dbbase.get_dataframe(name, begin=date, end=date)
                 close_price = data.close.values[-1]
@@ -208,7 +211,7 @@ class Account(Configurable):
         :param position:
         :return:
         """
-        logger.info("create buy order at time {date}".format(date=context.date))
+        logger.debug("create buy order at time {date}".format(date=context.date))
         used_cash = self._cash * position
         buy_price = context.tax_processor.calculate_buy_tax(price)
         number = np.floor(used_cash/(buy_price*100))

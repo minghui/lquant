@@ -18,7 +18,7 @@ tax:
 trade_strategy:
   peroid: 5days # days minutes
 cash: 100000
-begin: 20151001
+begin: 20150101
 end: 20160106
 benchmark: 600000
 
