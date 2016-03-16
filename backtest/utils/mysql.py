@@ -183,6 +183,14 @@ dd desc limit {number}""".format(source=self.source, end_date=end_date,
     def select_current_price(self, date):
         pass
 
+    def get_all_stock(self):
+        sql_str = """
+        select DISTINCT id FROM {source}
+        """.format(source=self.source)
+        data = self.execute_sql(sql_str)
+        data = [x[0] for x in data]
+        return data
+
 
 if __name__ == '__main__':
     stock_db = MySQLUtils('root', '1988', 'test', 'stock')
