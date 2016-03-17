@@ -7,6 +7,8 @@ import talib
 import codecs
 import yaml
 import logging
+from sklearn.preprocessing import normalize
+
 
 logger = logging.getLogger("ohlc")
 
@@ -186,6 +188,7 @@ class OHLCVD(object):
         indicator = open_data[1:] - close_data[:-1]
         indicator = (indicator < 0).astype(np.float64)
         indicator = np.array([0] + indicator.tolist())
+        indicator = indicator.reshape((indicator.shape[0], 1))
         self._add_new_feature(indicator, "jump_empty_down")
 
     def add_jump_empty_up(self):
@@ -194,15 +197,27 @@ class OHLCVD(object):
         indicator = open_data[1:] - close_data[:-1]
         indicator = (indicator > 0).astype(np.float64)
         indicator = np.array([0] + indicator.tolist())
+        indicator = indicator.reshape((indicator.shape[0], 1))
         self._add_new_feature(indicator, "jump_empty_up")
 
     def normalize(self):
-        pass
+        norm_data = self.data[:, 1:]
+        norm_data = norm_data.astype(np.float64)
+        norm_data[np.isnan(norm_data)] = 0
+        norm_data = (norm_data - norm_data.mean(0))/norm_data.std(0)
+        self.norm_data = norm_data
+
+    def feature_return(self, n_days=5):
+        close_value = self.data_frame.close.values
+        return_rate = (close_value[n_days:] - close_value[:-n_days])/\
+                      close_value[:-n_days]
+        return return_rate
 
     def __getitem__(self, item):
         pass
 
     def _add_new_feature(self, data, columns):
+        print self.data.shape
         self.data = np.hstack((self.data, data))
         if isinstance(columns, list):
             self.columns = self.columns + columns
@@ -215,3 +230,5 @@ class OHLCVD(object):
                                        index=self.data_frame.date)
 
 
+if __name__ == '__main__':
+   pass
