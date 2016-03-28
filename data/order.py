@@ -25,9 +25,9 @@ class Order(object):
         :return:
         """
         self.name = name
-        self.buy_price = price
+        self.cost = price
         self.tax = tax
-        self.date = date
+        self.buy_date = date
         self.buy = buy
         self.sell = sell
         self.number = number
@@ -45,13 +45,13 @@ class Order(object):
             # FIXME: This is bullshit.
             if order.sell:
                 return self - order
-            price = (self.number*self.buy_price+self.tax+order.tax+
-                     order.number*order.buy_price)/(self.number+order.number)
+            price = (self.number*self.cost+self.tax+order.tax+
+                     order.number*order.cost)/(self.number+order.number)
             number = self.number + order.number
             # FIXME: Should not return self, but a new record.
             # Here should change.
             return Order(name=self.name, price=price, tax=self.tax,
-                         number=number, date=self.date, buy=self.buy,
+                         number=number, date=self.buy_date, buy=self.buy,
                          sell=self.buy)
         else:
             raise ValueError('Only same stock can add.')
@@ -66,19 +66,19 @@ class Order(object):
         if self.name == order.name:
             if self.number < order.number:
                 raise ValueError('Can not sell more stock than have.')
-            return_value = (order.number*order.buy_price-order.tax) - \
-                           (order.number*self.buy_price)
+            return_value = (order.number*order.cost-order.tax) - \
+                           (order.number*self.cost)
             # self.number -= record.number
             number = self.number - order.number
             if self.number != 0:
                 # self.price = (self.price*self.number
                 # - return_value)/self.number
-                price = (self.buy_price*self.number - return_value)/self.number
+                price = (self.cost*self.number - return_value)/self.number
             else:
                 # self.price = -retu  rn_value/record.number
                 price = -return_value/order.number
             return Order(name=self.name, price=price, number=number,
-                         tax=self.tax, date=self.date, buy=self.buy,
+                         tax=self.tax, date=self.buy_date, buy=self.buy,
                          sell=self.buy)
         else:
             raise ValueError('Only same stock can sub.')
@@ -89,11 +89,11 @@ class Order(object):
         sell_print_str = '''This is the sell record of %s , cost price is: %s,
         number is: %s, date is: %s'''
         if self.buy:
-            return buy_print_str % (self.name, self.buy_price, self.number,
-                                    self.date)
+            return buy_print_str % (self.name, self.cost, self.number,
+                                    self.buy_date)
         elif self.sell:
-            return sell_print_str % (self.name, self.buy_price, self.number,
-                                     self.date)
+            return sell_print_str % (self.name, self.cost, self.number,
+                                     self.buy_date)
         else:
             return 'Do not have record'
 

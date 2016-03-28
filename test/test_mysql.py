@@ -7,7 +7,7 @@ from backtest.utils.mysql import MySQLUtils
 from data.ohlc import OHLCVD
 
 if __name__ == '__main__':
-    db = MySQLUtils('root', '1988', 'test', 'stock')
+    db = MySQLUtils('root', '1988', 'stock', 'stock')
     result = db.get_array('sh600741', begin='2007-10-10', end='2015-12-12')
     ohlc = OHLCVD(data=result)
     ohlc.add_macd()
@@ -35,9 +35,7 @@ if __name__ == '__main__':
     test_y = y[-100:]
     svc.fit(x, y)
     result = svc.predict(test_x)
-    print np.sum(result == test_y)*1.0/test_y.shape[0]
-    print np.sum(y[-100:])
-    print np.sum(result)
+    print np.sum(result == test_y)*1.0/y.shape[0]
     # vol_values = ohlc.data_frame.volume.values
     # raise_data = ohlc.data_frame.raise_rate.values
     # cor = np.correlate(vol_values, raise_data)
