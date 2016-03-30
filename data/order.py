@@ -10,6 +10,7 @@ class Order(object):
     """
 
     def __init__(self, name=None, price=None, number=None, tax=0, date=None,
+                 current_price=None,
                  buy=False, sell=False, **kwargs):
         """
         This is the record class which is used to save the record of every buy
@@ -32,10 +33,7 @@ class Order(object):
         self.sell = sell
         self.number = number
         self.return_rate = 0.0
-        if "current_price" in kwargs:
-            self.current_price = kwargs["current_price"]
-        else:
-            self.current_price = None
+        self.current_price = current_price
         self.__dict__.update(kwargs)
 
     def __add__(self, order):
@@ -45,13 +43,14 @@ class Order(object):
             # FIXME: This is bullshit.
             if order.sell:
                 return self - order
-            price = (self.number*self.cost+self.tax+order.tax+
+            price = (self.number*self.cost +
                      order.number*order.cost)/(self.number+order.number)
             number = self.number + order.number
             # FIXME: Should not return self, but a new record.
             # Here should change.
             return Order(name=self.name, price=price, tax=self.tax,
                          number=number, date=self.buy_date, buy=self.buy,
+                         current_price=order.current_price,
                          sell=self.buy)
         else:
             raise ValueError('Only same stock can add.')
@@ -66,7 +65,7 @@ class Order(object):
         if self.name == order.name:
             if self.number < order.number:
                 raise ValueError('Can not sell more stock than have.')
-            return_value = (order.number*order.cost-order.tax) - \
+            return_value = (order.number*order.cost) - \
                            (order.number*self.cost)
             # self.number -= record.number
             number = self.number - order.number
@@ -75,7 +74,7 @@ class Order(object):
                 # - return_value)/self.number
                 price = (self.cost*self.number - return_value)/self.number
             else:
-                # self.price = -retu  rn_value/record.number
+                # self.price = -return_value/record.number
                 price = -return_value/order.number
             return Order(name=self.name, price=price, number=number,
                          tax=self.tax, date=self.buy_date, buy=self.buy,

@@ -199,7 +199,8 @@ class Account(Configurable):
                                                      .current_price
                                                      - self._old_order[name]
                                                      .buy_price/self
-                                                     ._old_order[name].buy_price)
+                                                     ._old_order[name].buy_price
+                                                     )
             except Exception as e:
                 logger.exception(e.message)
                 print e.message
@@ -217,12 +218,13 @@ class Account(Configurable):
         :param position:
         :return:
         """
-        logger.debug("create buy order at time {date}".format(date=context.date))
+        logger.info("create buy order at time {date}".format(date=context.date))
         used_cash = self._cash * position
         buy_price = context.tax_processor.calculate_buy_tax(price)
         number = np.floor(used_cash/(buy_price*100))
         order = Order(name=name, price=buy_price, date=context.date,
                       number=number,
+                      current_price=price,
                       buy=True)
         return order
 
@@ -241,7 +243,9 @@ class Account(Configurable):
         order = self._old_order[name]
         sell_price = context.tax_processor_calculate_sell_tax(price)
         sell_number = np.floor(order.number*position)
-        return Order(name=name, price=sell_price, date=context.date,
+        return Order(name=name, price=sell_price,
+                     current_price=price,
+                     date=context.date,
                      number=sell_number, sell=True)
 
     def get_cash(self):
