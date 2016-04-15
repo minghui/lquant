@@ -200,6 +200,21 @@ class OHLCVD(object):
         indicator = indicator.reshape((indicator.shape[0], 1))
         self._add_new_feature(indicator, "jump_empty_up")
 
+    def add_rsi_feature(self):
+        inputs = {
+            'open': self.data_frame.open.values,
+            'high': self.data_frame.high.values,
+            'low': self.data_frame.low.values,
+            'close': self.data_frame.close.values,
+            'volume': self.data_frame.volume.values
+        }
+
+        self._add_new_feature(talib.abstract.RSI(inputs, timeperiod=6), "rsi6")
+        self._add_new_feature(talib.abstract.RSI(inputs, timeperiod=12),
+                              "rsi12")
+        self._add_new_feature(
+            talib.abstract.RSI(inputs, timeperiod=24), "rsi24")
+
     def normalize(self):
         norm_data = self.data[:, 1:]
         norm_data = norm_data.astype(np.float64)
