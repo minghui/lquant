@@ -215,6 +215,14 @@ class OHLCVD(object):
         self._add_new_feature(
             talib.abstract.RSI(inputs, timeperiod=24), "rsi24")
 
+    def add_recent_down_v_turn(self, n):
+        """
+        If recent n days appear down v turn event.
+        :param n:
+        :return:
+        """
+        pass
+
     def normalize(self):
         norm_data = self.data[:, 1:]
         norm_data = norm_data.astype(np.float64)
@@ -222,7 +230,7 @@ class OHLCVD(object):
         norm_data = (norm_data - norm_data.mean(0))/norm_data.std(0)
         self.norm_data = norm_data
 
-    def feature_return(self, n_days=5):
+    def future_return(self, n_days=5):
         close_value = self.data_frame.close.values
         return_rate = (close_value[n_days:] - close_value[:-n_days])/\
                       close_value[:-n_days]
