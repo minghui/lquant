@@ -1,7 +1,6 @@
 # coding=utf-8
 import numpy as np
 from report import *
-import logbook
 import yaml
 try:
     from utils.mysql import MySQLUtils
@@ -265,7 +264,7 @@ class BackTestBase(object):
         if order is not None:
             logger.info("generate sell order"+str(order))
             self._account.sell(order, self._market)
-        self._account._after_market(date)
+        self._account.after_market(date)
         return_rate = self._account.get_return(date)
 
         if return_rate is not None:

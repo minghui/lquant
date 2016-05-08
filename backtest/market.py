@@ -31,7 +31,8 @@ class Market(Configurable):
         self._order_book = OrderBook()
 
     def process_order(self, order):
-        logger.info("process the order: ", order)
+        # logger.info("process the order: ", order)
+        print 'fake message'
         return True
 
     def reject(self, order):

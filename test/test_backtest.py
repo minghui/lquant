@@ -56,7 +56,7 @@ class MaStrategy(StrategyBase):
 
     def __init__(self):
         StrategyBase.__init__(self)
-        self.logger = get_module_logger("my")
+        self.logger = get_module_logger("macd")
 
     def if_buy(self, context):
         data = context.db.select_data_by_number(context.asset_code, 70,

@@ -39,6 +39,7 @@ class Account(Configurable):
         self._order_book = OrderBook()
         self._new_order = {}
         self._old_order = {}
+        self._puttable_order = {}
         # Account should have ability to connect the database.
         self._dbbase = database
 
@@ -92,8 +93,10 @@ class Account(Configurable):
     def buy(self, order, market=None):
         if market is None:
             raise ValueError("Invalid market")
-        if order.buy_price*order.number > self._cash:
+        #TODO: Make clear the number of the order is 100 based or 1 based.
+        if order.price*order.number > self._cash:
             raise ValueError("Do not have so much money")
+
         if market.process_order(order):
             self._order_book.add_order(order)
             # Add order to the asset.
@@ -106,7 +109,7 @@ class Account(Configurable):
                 self._new_order[order.name] += order
             else:
                 self._new_order[order.name] = order
-            self._cash = self._cash-order.buy_price*order.number*100
+            self._cash = self._cash-order.price*order.number
         else:
             return False
 
@@ -138,7 +141,7 @@ class Account(Configurable):
             if self._old_order[order.name].number == 0:
                 del self._old_order[order.name]
 
-            self._cash += order.buy_price*order.number*100
+            self._cash += order.price*order.number
             return True
         else:
             return False
@@ -151,7 +154,7 @@ class Account(Configurable):
         """
         return None
 
-    def _after_market(self, date):
+    def after_market(self, date):
         """
         Process the data after the market close.
         :param date: type str
@@ -198,8 +201,8 @@ class Account(Configurable):
                 self._old_order[name].return_rate = (self._old_order[name]
                                                      .current_price
                                                      - self._old_order[name]
-                                                     .buy_price/self
-                                                     ._old_order[name].buy_price
+                                                     .price/self
+                                                     ._old_order[name].price
                                                      )
             except Exception as e:
                 logger.exception(e.message)
@@ -221,7 +224,9 @@ class Account(Configurable):
         logger.info("create buy order at time {date}".format(date=context.date))
         used_cash = self._cash * position
         buy_price = context.tax_processor.calculate_buy_tax(price)
-        number = np.floor(used_cash/(buy_price*100))
+        # Here we use 1 based count method.
+        number = np.floor(used_cash/(buy_price*100))*100
+        print 'this is the buy number', number, 'cost money', buy_price*number
         order = Order(name=name, price=buy_price, date=context.date,
                       number=number,
                       current_price=price,

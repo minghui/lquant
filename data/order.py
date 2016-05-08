@@ -26,7 +26,8 @@ class Order(object):
         :return:
         """
         self.name = name
-        self.cost = price
+        # Here price is the buy or sell price. Current price is saved in current_price variable.
+        self.price = price
         self.tax = tax
         self.buy_date = date
         self.buy = buy
@@ -36,65 +37,67 @@ class Order(object):
         self.current_price = current_price
         self.__dict__.update(kwargs)
 
-    def __add__(self, order):
-        if not isinstance(order, Order):
+    def __add__(self, new_order):
+        if not isinstance(new_order, Order):
             raise ValueError('Must a Record class')
-        if self.name == order.name:
+        if self.name == new_order.name:
             # FIXME: This is bullshit.
-            if order.sell:
-                return self - order
-            price = (self.number*self.cost +
-                     order.number*order.cost)/(self.number+order.number)
-            number = self.number + order.number
+            if new_order.sell:
+                return self - new_order
+            price = (self.number*self.price +
+                     new_order.number*new_order.price)/(self.number+new_order.number)
+            number = self.number + new_order.number
             # FIXME: Should not return self, but a new record.
             # Here should change.
             return Order(name=self.name, price=price, tax=self.tax,
                          number=number, date=self.buy_date, buy=self.buy,
-                         current_price=order.current_price,
+                         current_price=new_order.current_price,
                          sell=self.buy)
         else:
             raise ValueError('Only same stock can add.')
 
-    def __sub__(self, order):
+    def __sub__(self, new_order):
         """
         Sub method, maybe it is useless.
-        :type order: Order
+        :type new_order: Order
         """
-        if not isinstance(order, Order):
+        if not isinstance(new_order, Order):
             raise ValueError('Must a Record class can sub')
-        if self.name == order.name:
-            if self.number < order.number:
+        if self.name == new_order.name:
+            if self.number < new_order.number:
                 raise ValueError('Can not sell more stock than have.')
-            return_value = (order.number*order.cost) - \
-                           (order.number*self.cost)
+            return_value = (new_order.number*new_order.price) - \
+                           (new_order.number*self.price)
             # self.number -= record.number
-            number = self.number - order.number
-            if self.number != 0:
-                # self.price = (self.price*self.number
-                # - return_value)/self.number
-                price = (self.cost*self.number - return_value)/self.number
-            else:
-                # self.price = -return_value/record.number
-                price = -return_value/order.number
-            return Order(name=self.name, price=price, number=number,
+            number = self.number - new_order.number
+            # if self.number != 0:
+            #     # self.price = (self.price*self.number
+            #     # - return_value)/self.number
+            #     price = (self.price*self.number - return_value)/self.number
+            # else:
+            #     # self.price = -return_value/record.number
+            #     price = -return_value/new_order.number
+            # Do not change the price we buy the stock.
+            return Order(name=self.name, price=self.price, number=number,
                          tax=self.tax, date=self.buy_date, buy=self.buy,
-                         sell=self.buy)
+                         sell=self.sell)
         else:
             raise ValueError('Only same stock can sub.')
 
     def __repr__(self):
-        buy_print_str = '''This is the buy record of %s , cost price is: %s,
-        number is: %s, date is: %s'''
-        sell_print_str = '''This is the sell record of %s , cost price is: %s,
-        number is: %s, date is: %s'''
-        if self.buy:
-            return buy_print_str % (self.name, self.cost, self.number,
-                                    self.buy_date)
-        elif self.sell:
-            return sell_print_str % (self.name, self.cost, self.number,
-                                     self.buy_date)
-        else:
-            return 'Do not have record'
+        return 'None'
+        # buy_print_str = '''This is the buy record of %s , cost price is: %s,
+        # number is: %s, date is: %s'''
+        # sell_print_str = '''This is the sell record of %s , cost price is: %s,
+        # number is: %s, date is: %s'''
+        # if self.buy:
+        #     return buy_print_str % (self.name, self.price, self.number,
+        #                             self.buy_date)
+        # elif self.sell:
+        #     return sell_print_str % (self.name, self.price, self.number,
+        #                              self.buy_date)
+        # else:
+        #     return 'Do not have record'
 
     def set_tax(self, tax):
         self.tax = tax
