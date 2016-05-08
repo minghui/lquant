@@ -85,19 +85,18 @@ class Order(object):
             raise ValueError('Only same stock can sub.')
 
     def __repr__(self):
-        return 'None'
-        # buy_print_str = '''This is the buy record of %s , cost price is: %s,
-        # number is: %s, date is: %s'''
-        # sell_print_str = '''This is the sell record of %s , cost price is: %s,
-        # number is: %s, date is: %s'''
-        # if self.buy:
-        #     return buy_print_str % (self.name, self.price, self.number,
-        #                             self.buy_date)
-        # elif self.sell:
-        #     return sell_print_str % (self.name, self.price, self.number,
-        #                              self.buy_date)
-        # else:
-        #     return 'Do not have record'
+        buy_print_str = '''This is the buy record of %s , cost price is: %s,
+        number is: %s, date is: %s'''
+        sell_print_str = '''This is the sell record of %s , cost price is: %s,
+        number is: %s, date is: %s'''
+        if self.buy:
+            return buy_print_str % (self.name, self.price, self.number,
+                                    self.buy_date)
+        elif self.sell:
+            return sell_print_str % (self.name, self.price, self.number,
+                                     self.buy_date)
+        else:
+            return 'Do not have record'
 
     def set_tax(self, tax):
         self.tax = tax

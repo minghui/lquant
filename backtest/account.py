@@ -122,8 +122,8 @@ class Account(Configurable):
         """
         if market is None:
             raise ValueError("Invalid market")
-        print "This is order name :", order.name
-        print self._old_order
+        # print "This is order name :", order.name
+        # print self._old_order
         # Check if order in the old order
         if order.name not in self._old_order:
             raise ValueError("Do not have such stock asset")
@@ -193,17 +193,15 @@ class Account(Configurable):
         for name in self._old_order:
             try:
                 # print name, date
-                logger.debug("name is {name}, date is {date}".format(name=name,
-                                                                     date=date))
+                # logger.debug("name is {name}, date is {date}".format(name=name,
+                #                                                      date=date))
                 data = self._dbbase.get_dataframe(name, begin=date, end=date)
                 close_price = data.close.values[-1]
                 self._old_order[name].current_price = close_price
-                self._old_order[name].return_rate = (self._old_order[name]
-                                                     .current_price
-                                                     - self._old_order[name]
-                                                     .price/self
-                                                     ._old_order[name].price
-                                                     )
+                self._old_order[name].return_rate = (self._old_order[name].current_price
+                                                     - self._old_order[name].price)/\
+                                                    self._old_order[name].price
+
             except Exception as e:
                 logger.exception(e.message)
                 print e.message
@@ -226,7 +224,7 @@ class Account(Configurable):
         buy_price = context.tax_processor.calculate_buy_tax(price)
         # Here we use 1 based count method.
         number = np.floor(used_cash/(buy_price*100))*100
-        print 'this is the buy number', number, 'cost money', buy_price*number
+        # print 'this is the buy number', number, 'cost money', buy_price*number
         order = Order(name=name, price=buy_price, date=context.date,
                       number=number,
                       current_price=price,
@@ -243,11 +241,13 @@ class Account(Configurable):
         :param position:
         :return:
         """
-        if name not in self._old_order[name]:
+        if name not in self._old_order:
             raise ValueError('Stock not in the order list')
         order = self._old_order[name]
-        sell_price = context.tax_processor_calculate_sell_tax(price)
+        # sell_price = context.tax_processor_calculate_sell_tax(price)
+        sell_price = price
         sell_number = np.floor(order.number*position)
+        # print 'this is the sell number', sell_number, 'cost money', sell_price*sell_number
         return Order(name=name, price=sell_price,
                      current_price=price,
                      date=context.date,
@@ -261,7 +261,7 @@ class Account(Configurable):
         total_cash = self._cash
         for key in self._stock_asset:
             asset = self._stock_asset[key]
-            total_cash += asset.current_price*asset.number*100
+            total_cash += asset.current_price*asset.number
         return total_cash
 
 if __name__ == "__main__":

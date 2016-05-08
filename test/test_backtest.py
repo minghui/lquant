@@ -71,8 +71,8 @@ class MaStrategy(StrategyBase):
         # print 'ma60 value:', ma60_value
         # print "current price :", price
         rate = (ma60_value - low)/ma60_value
-        self.logger.info("ma60 value :" + str(ma60_value) + " current price "+
-                         str(price)+" rate is :" + str(rate))
+        # self.logger.info("ma60 value :" + str(ma60_value) + " current price "+
+        #                  str(price)+" rate is :" + str(rate))
         # print "this is the rate of the ma60 minus low", rate
         if (ma60_value - low) / ma60_value >= 0.1:
             order = context.account.create_buy_order(name=context.asset_code,
@@ -96,10 +96,14 @@ class MaStrategy(StrategyBase):
             # print name
             if stock_asset[name].return_rate > 0.06 or \
                             stock_asset[name].return_rate <= -0.03:
-                return Order(name=context.asset_code, date=context.date,
-                             price=stock_asset[name].current_price,
-                             number=stock_asset[name].number,
-                             sell=True)
+                return context.account.create_sell_order(name=context.asset_code,
+                                                         price=stock_asset[name].current_price,
+                                                         context=context)
+                # return Order(name=context.asset_code, date=context.date,
+                #              price=stock_asset[name].current_price,
+                #              number=stock_asset[name].number,
+                #              sell=True)
+
         return None
 
 
