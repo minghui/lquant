@@ -32,7 +32,7 @@ class Market(Configurable):
 
     def process_order(self, order):
         # logger.info("process the order: ", order)
-        print 'fake message'
+        # print 'fake message'
         return True
 
     def reject(self, order):

@@ -75,8 +75,8 @@ class Account(Configurable):
     def add_cash(self, added_cash):
         self._cash = added_cash
 
-    def reset(self):
-        pass
+    def reset(self, cash, database):
+        self.__init__(cash, database)
 
     def get_asset(self, date):
         stock_asset = 0
@@ -129,7 +129,8 @@ class Account(Configurable):
             raise ValueError("Do not have such stock asset")
         if order.number > self._old_order[order.name].number:
             raise ValueError("Can not sell too much")
-
+        # print self._stock_asset
+        # print self._old_order
         # Flash the order in the old order and the stock asset.
         if market.process_order(order):
             self._order_book.add_order(order)

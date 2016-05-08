@@ -129,6 +129,7 @@ class BackTestBase(object):
             raise ValueError("Do not have a strategy")
         for stock in self._backtest_list:
             self._strategy.init(self._cash)
+            self._account.reset(self._cash, self._database)
             work_days = self._database.get_work_days(stock,
                                                      begin=self._begin_date,
                                                      end=self._end_date)

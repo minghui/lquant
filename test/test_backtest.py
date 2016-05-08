@@ -107,6 +107,52 @@ class MaStrategy(StrategyBase):
         return None
 
 
+class VStateStrategy(StrategyBase):
+    def __init__(self):
+        StrategyBase.__init__(self)
+        self.logger = get_module_logger("vstate")
+
+    def if_buy(self, context):
+        data = context.db.select_data_by_number(context.asset_code, 1,
+                                                context.date)
+        ohlc = OHLCVD(data)
+        data = ohlc.get_dataframe()
+        low_value = data.low.values[-1]
+        if data.open.values[-1] > data.close.values[-1]:
+            min_value = data.close.values[-1]
+        else:
+            min_value = data.open.values[-1]
+        if (min_value - low_value) / data.close.values[-1] > 0.05:
+            order = context.account.create_buy_order(context.asset_code,
+                                                     price=data.close.values[-1],
+                                                     context=context)
+            if order is not None and order.number > 0:
+                return order
+            else:
+                self.logger.info("can not create order")
+                return None
+        return None
+
+    def if_sell(self, context):
+        # print context.asset_code
+        context.account.get_return(context.date)
+        stock_asset = context.account.get_stock_asset()
+        # print 'in sell process'
+        # print 'the length of the stock:  ', len(stock_asset)
+        for name in stock_asset:
+            # print name
+            if stock_asset[name].return_rate > 0.06 or \
+                            stock_asset[name].return_rate <= -0.04:
+                return context.account.create_sell_order(name=context.asset_code,
+                                                         price=stock_asset[name].current_price,
+                                                         context=context)
+                # return Order(name=context.asset_code, date=context.date,
+                #              price=stock_asset[name].current_price,
+                #              number=stock_asset[name].number,
+                #              sell=True)
+
+        return None
+
 if __name__ == '__main__':
     import logging
     import os
@@ -124,5 +170,6 @@ if __name__ == '__main__':
     test_case = BackTestBase(config_file='./test_backtest.yaml', log=logging)
     test_strategy = CountStrategy()
     ma_strategy = MaStrategy()
-    test_case.init(strategy=ma_strategy, analysis=analysis)
+    v_state_strategy = VStateStrategy()
+    test_case.init(strategy=v_state_strategy, analysis=analysis)
     test_case.test_strategy()
