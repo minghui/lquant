@@ -57,10 +57,7 @@ class BackTestBase(object):
             raise ValueError("Need config file")
         with codecs.open(config_file, encoding='utf-8') as f:
             config = yaml.load(f)
-        if isinstance(config['test_list'], list):
-            self._backtest_list = config['test_list']
-        else:
-            self._backtest_list = ALL_STOCK_LIST
+
         self._cash = config['cash']
         self._base_cash = self._cash
         self._begin_date = config['begin']
@@ -88,6 +85,10 @@ class BackTestBase(object):
             self._database = RDSDB(self.logger)
         else:
             raise ValueError("Do not support data source")
+        if isinstance(config['test_list'], list):
+            self._backtest_list = config['test_list']
+        else:
+            self._backtest_list = self._database.get_all_stock()
         self._qury_type = config['query_type']
         self._need_data_length = config['need_data_length']
         self._summary = {}
@@ -139,9 +140,11 @@ class BackTestBase(object):
                 self._account.get_cash()
                 asset_array.append(self._account.get_cash())
             data = pd.DataFrame(data=asset_array, index=work_days)
+            if self._analysis is not None:
+                self._analysis(data)
             print data
-            data.plot()
-            plt.show()
+            # data.plot()
+            # plt.show()
         #         context = Context()
         #         context.db = self._database
         #         context.date = day

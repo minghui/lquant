@@ -202,18 +202,23 @@ class OHLCVD(object):
 
     def add_rsi_feature(self):
         inputs = {
-            'open': self.data_frame.open.values,
-            'high': self.data_frame.high.values,
-            'low': self.data_frame.low.values,
-            'close': self.data_frame.close.values,
-            'volume': self.data_frame.volume.values
+            'open': self.data_frame.open.values.astype(np.float64),
+            'high': self.data_frame.high.values.astype(np.float64),
+            'low': self.data_frame.low.values.astype(np.float64),
+            'close': self.data_frame.close.values.astype(np.float64),
+            'volume': self.data_frame.volume.values.astype(np.float64)
         }
+        print 'self.data.shape is :', self.data.shape
+        tmp = talib.abstract.RSI(inputs, timeperiod=6)
 
-        self._add_new_feature(talib.abstract.RSI(inputs, timeperiod=6), "rsi6")
-        self._add_new_feature(talib.abstract.RSI(inputs, timeperiod=12),
-                              "rsi12")
-        self._add_new_feature(
-            talib.abstract.RSI(inputs, timeperiod=24), "rsi24")
+        tmp = tmp.reshape((tmp.shape[0], 1))
+        self._add_new_feature(tmp, "rsi6")
+        tmp = talib.abstract.RSI(inputs, timeperiod=12)
+        tmp = tmp.reshape(tmp.shape[0], 1)
+        self._add_new_feature(tmp, "rsi12")
+        tmp = talib.abstract.RSI(inputs, timeperiod=24)
+        tmp = tmp.reshape(tmp.shape[0], 1)
+        self._add_new_feature(tmp, "rsi24")
 
     def add_recent_down_v_turn(self, n):
         """
@@ -221,7 +226,12 @@ class OHLCVD(object):
         :param n:
         :return:
         """
-        pass
+        min_price = np.min(self.data_frame.get(["open", "close"]).values, axis=1)
+        low_price = self.data_frame_frame.low.values
+        xuti = min_price - low_price
+        v_state = xuti[1:]/low_price[:-1]
+        np.concatenate(([0], v_state), axis=0)
+        self._add_new_feature(v_state, "v_state")
 
     def normalize(self):
         norm_data = self.data[:, 1:]
@@ -254,4 +264,4 @@ class OHLCVD(object):
 
 
 if __name__ == '__main__':
-   pass
+    pass
