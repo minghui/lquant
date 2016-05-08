@@ -15,7 +15,9 @@ class MyTestCase(unittest.TestCase):
         ohlc.add_rsi_feature()
         ohlc.add_raise_day(5)
         ohlc.add_raise_day(10)
+        ohlc.add_recent_down_v_turn()
         data = ohlc.get_array()
+
         print data.shape[1]
         # self.assertEqual(True, False)
 

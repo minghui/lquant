@@ -220,17 +220,18 @@ class OHLCVD(object):
         tmp = tmp.reshape(tmp.shape[0], 1)
         self._add_new_feature(tmp, "rsi24")
 
-    def add_recent_down_v_turn(self, n):
+    def add_recent_down_v_turn(self):
         """
         If recent n days appear down v turn event.
         :param n:
         :return:
         """
         min_price = np.min(self.data_frame.get(["open", "close"]).values, axis=1)
-        low_price = self.data_frame_frame.low.values
+        low_price = self.data_frame.low.values
         xuti = min_price - low_price
         v_state = xuti[1:]/low_price[:-1]
-        np.concatenate(([0], v_state), axis=0)
+        v_state = np.concatenate(([0], v_state), axis=0)
+        v_state = v_state.reshape(v_state.shape[0], 1)
         self._add_new_feature(v_state, "v_state")
 
     def normalize(self):
