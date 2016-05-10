@@ -16,6 +16,33 @@ logger = logging.getLogger("ohlc")
 This file contain all the method used for parsing OHLC data.
 """
 
+USABLE_FUNCTION = ['ATR', 'NATR', 'TRANGE', 'DEMA', 'EMA', 'HT_TRENDLINE', 'KAMA',
+                   'MA', 'MIDPOINT', 'MIDPRICE', 'SAR', 'SAREXT', 'SMA', 'T3', 'TEMA',
+                   'TRIMA', 'WMA', 'BETA', 'CORREL', 'LINEARREG', 'LINEARREG_ANGLE',
+                   'LINEARREG_INTERCEPT', 'LINEARREG_SLOPE', 'STDDEV', 'TSF', 'VAR', 'ADX', 'ADXR',
+                   'APO', 'AROONOSC', 'BOP', 'CCI', 'CMO', 'DX', 'MFI', 'MINUS_DI', 'MINUS_DM',
+                   'MOM', 'PLUS_DI', 'PLUS_DM', 'PPO', 'ROC', 'ROCP', 'ROCR', 'ROCR100', 'RSI',
+                   'TRIX', 'ULTOSC', 'WILLR', 'CDL2CROWS', 'CDL3BLACKCROWS', 'CDL3INSIDE',
+                   'CDL3LINESTRIKE', 'CDL3OUTSIDE', 'CDL3STARSINSOUTH', 'CDL3WHITESOLDIERS',
+                   'CDLABANDONEDBABY', 'CDLADVANCEBLOCK', 'CDLBELTHOLD', 'CDLBREAKAWAY',
+                   'CDLCLOSINGMARUBOZU', 'CDLCONCEALBABYSWALL', 'CDLCOUNTERATTACK',
+                   'CDLDARKCLOUDCOVER', 'CDLDOJI', 'CDLDOJISTAR', 'CDLDRAGONFLYDOJI',
+                   'CDLENGULFING', 'CDLEVENINGDOJISTAR', 'CDLEVENINGSTAR', 'CDLGAPSIDESIDEWHITE',
+                   'CDLGRAVESTONEDOJI', 'CDLHAMMER', 'CDLHANGINGMAN', 'CDLHARAMI', 'CDLHARAMICROSS',
+                   'CDLHIGHWAVE', 'CDLHIKKAKE', 'CDLHIKKAKEMOD', 'CDLHOMINGPIGEON',
+                   'CDLIDENTICAL3CROWS', 'CDLINNECK', 'CDLINVERTEDHAMMER', 'CDLKICKING',
+                   'CDLKICKINGBYLENGTH', 'CDLLADDERBOTTOM', 'CDLLONGLEGGEDDOJI', 'CDLLONGLINE',
+                   'CDLMARUBOZU', 'CDLMATCHINGLOW', 'CDLMATHOLD', 'CDLMORNINGDOJISTAR',
+                   'CDLMORNINGSTAR', 'CDLONNECK', 'CDLPIERCING', 'CDLRICKSHAWMAN',
+                   'CDLRISEFALL3METHODS', 'CDLSEPARATINGLINES', 'CDLSHOOTINGSTAR', 'CDLSHORTLINE',
+                   'CDLSPINNINGTOP', 'CDLSTALLEDPATTERN', 'CDLSTICKSANDWICH', 'CDLTAKURI',
+                   'CDLTASUKIGAP', 'CDLTHRUSTING', 'CDLTRISTAR', 'CDLUNIQUE3RIVER',
+                   'CDLUPSIDEGAP2CROWS', 'CDLXSIDEGAP3METHODS', 'AD', 'ADOSC', 'OBV',
+                   'MAX', 'MAXINDEX', 'MIN', 'MININDEX', 'MULT', 'SUB', 'SUM', 'ACOS', 'ASIN',
+                   'ATAN', 'CEIL', 'COS', 'COSH', 'EXP', 'FLOOR', 'LN', 'LOG10', 'SIN', 'SINH',
+                   'SQRT', 'TAN', 'TANH', 'AVGPRICE', 'MEDPRICE', 'TYPPRICE', 'WCLPRICE',
+                   'HT_DCPERIOD', 'HT_DCPHASE', 'HT_TRENDMODE']
+
 
 class OHLCVD(object):
 
@@ -246,6 +273,19 @@ class OHLCVD(object):
         return_rate = (close_value[n_days:] - close_value[:-n_days])/\
                       close_value[:-n_days]
         return return_rate
+
+    def add_all_ta_feature(self):
+        for name in USABLE_FUNCTION:
+            func = talib.abstract.Function(name)
+            try:
+                result = func(self._inputs)
+                if isinstance(result, list):
+                    for i in range(len(result)):
+                        self._add_new_feature(result[i].reshape(result[i].shape[0], 1), name+str(i))
+                elif isinstance(result, np.ndarray):
+                    self._add_new_feature(result.reshape(result.shape[0], 1), name)
+            except Exception as e:
+                print name, ' wrong'
 
     def __getitem__(self, item):
         pass
