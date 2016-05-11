@@ -45,7 +45,7 @@ class MySQLUtils(DBBase):
         self._end_date = None
         self._end_date_set = False
 
-    def create_db(self, stock_name):
+    def create_ohlc_db(self, stock_name):
         # self.stock_name = stock_name
         sql_line = '''
  create table if not exists STOCK(ID VARCHAR(20), DD DATE, START FLOAT,
@@ -54,7 +54,167 @@ class MySQLUtils(DBBase):
         self.cur.execute("alter table STOCK add unique index(ID, DD)")
         self.db.commit()
 
-    def insert_data(self, data, id):
+    def create_feature_db(self, database_name):
+        sql_line = """
+        DROP TABLE IF EXISTS {dababase_name};
+CREATE TABLE IF NOT EXISTS {database_name}(
+     ID VARCHAR(20),
+  DD DATE,
+  START FLOAT,
+  HIGH FLOAT,
+   LOW FLOAT,
+   CLOSE FLOAT,
+   VOLUME FLOAT,
+   DEAL FLOAT,
+    ATR FLOAT,
+    NATR FLOAT,
+    TRANGE FLOAT,
+    DEMA FLOAT,
+    EMA FLOAT,
+    HT_TRENDLINE FLOAT,
+    KAMA FLOAT,
+    MA FLOAT,
+    MIDPOINT FLOAT,
+    MIDPRICE FLOAT,
+    SAR FLOAT,
+    SAREXT FLOAT,
+    SMA FLOAT,
+    T3 FLOAT,
+    TEMA FLOAT,
+    TRIMA FLOAT,
+    WMA FLOAT,
+    BETA FLOAT,
+    CORREL FLOAT,
+    LINEARREG FLOAT,
+    LINEARREG_ANGLE FLOAT,
+    LINEARREG_INTERCEPT FLOAT,
+    LINEARREG_SLOPE FLOAT,
+    STDDEV FLOAT,
+    TSF FLOAT,
+    VAR FLOAT,
+    ADX FLOAT,
+    ADXR FLOAT,
+    APO FLOAT,
+    AROONOSC FLOAT,
+    BOP FLOAT,
+    CCI FLOAT,
+    CMO FLOAT,
+    DX FLOAT,
+    MFI FLOAT,
+    MINUS_DI FLOAT,
+    MINUS_DM FLOAT,
+    MOM FLOAT,
+    PLUS_DI FLOAT,
+    PLUS_DM FLOAT,
+    PPO FLOAT,
+    ROC FLOAT,
+    ROCP FLOAT,
+    ROCR FLOAT,
+    ROCR100 FLOAT,
+    RSI FLOAT,
+    TRIX FLOAT,
+    ULTOSC FLOAT,
+    WILLR FLOAT,
+    CDL2CROWS FLOAT,
+    CDL3BLACKCROWS FLOAT,
+    CDL3INSIDE FLOAT,
+    CDL3LINESTRIKE FLOAT,
+    CDL3OUTSIDE FLOAT,
+    CDL3STARSINSOUTH FLOAT,
+    CDL3WHITESOLDIERS FLOAT,
+    CDLABANDONEDBABY FLOAT,
+    CDLADVANCEBLOCK FLOAT,
+    CDLBELTHOLD FLOAT,
+    CDLBREAKAWAY FLOAT,
+    CDLCLOSINGMARUBOZU FLOAT,
+    CDLCONCEALBABYSWALL FLOAT,
+    CDLCOUNTERATTACK FLOAT,
+    CDLDARKCLOUDCOVER FLOAT,
+    CDLDOJI FLOAT,
+    CDLDOJISTAR FLOAT,
+    CDLDRAGONFLYDOJI FLOAT,
+    CDLENGULFING FLOAT,
+    CDLEVENINGDOJISTAR FLOAT,
+    CDLEVENINGSTAR FLOAT,
+    CDLGAPSIDESIDEWHITE FLOAT,
+    CDLGRAVESTONEDOJI FLOAT,
+    CDLHAMMER FLOAT,
+    CDLHANGINGMAN FLOAT,
+    CDLHARAMI FLOAT,
+    CDLHARAMICROSS FLOAT,
+    CDLHIGHWAVE FLOAT,
+    CDLHIKKAKE FLOAT,
+    CDLHIKKAKEMOD FLOAT,
+    CDLHOMINGPIGEON FLOAT,
+    CDLIDENTICAL3CROWS FLOAT,
+    CDLINNECK FLOAT,
+    CDLINVERTEDHAMMER FLOAT,
+    CDLKICKING FLOAT,
+    CDLKICKINGBYLENGTH FLOAT,
+    CDLLADDERBOTTOM FLOAT,
+    CDLLONGLEGGEDDOJI FLOAT,
+    CDLLONGLINE FLOAT,
+    CDLMARUBOZU FLOAT,
+    CDLMATCHINGLOW FLOAT,
+    CDLMATHOLD FLOAT,
+    CDLMORNINGDOJISTAR FLOAT,
+    CDLMORNINGSTAR FLOAT,
+    CDLONNECK FLOAT,
+    CDLPIERCING FLOAT,
+    CDLRICKSHAWMAN FLOAT,
+    CDLRISEFALL3METHODS FLOAT,
+    CDLSEPARATINGLINES FLOAT,
+    CDLSHOOTINGSTAR FLOAT,
+    CDLSHORTLINE FLOAT,
+    CDLSPINNINGTOP FLOAT,
+    CDLSTALLEDPATTERN FLOAT,
+    CDLSTICKSANDWICH FLOAT,
+    CDLTAKURI FLOAT,
+    CDLTASUKIGAP FLOAT,
+    CDLTHRUSTING FLOAT,
+    CDLTRISTAR FLOAT,
+    CDLUNIQUE3RIVER FLOAT,
+    CDLUPSIDEGAP2CROWS FLOAT,
+    CDLXSIDEGAP3METHODS FLOAT,
+    AD FLOAT,
+    ADOSC FLOAT,
+    OBV FLOAT,
+    MAX FLOAT,
+    MAXINDEX FLOAT,
+    MIN FLOAT,
+    MININDEX FLOAT,
+    MULT FLOAT,
+    SUB FLOAT,
+    SUM FLOAT,
+    ACOS FLOAT,
+    ASIN FLOAT,
+    ATAN FLOAT,
+    CEIL FLOAT,
+    COS FLOAT,
+    COSH FLOAT,
+    EXP FLOAT,
+    FLOOR FLOAT,
+    LN FLOAT,
+    LOG10 FLOAT,
+    SIN FLOAT,
+    SINH FLOAT,
+    SQRT FLOAT,
+    TAN FLOAT,
+    TANH FLOAT,
+    AVGPRICE FLOAT,
+    MEDPRICE FLOAT,
+    TYPPRICE FLOAT,
+    WCLPRICE FLOAT,
+    HT_DCPERIOD FLOAT,
+    HT_DCPHASE FLOAT,
+    HT_TRENDMODE FLOAT
+)
+        """.format(database_name=database_name)
+        self.cur.execute(sql_line)
+        self.cur.execute("alter table {source} add unique index(ID, DD)".format(source=database_name))
+        self.db.commit()
+
+    def insert_ohlc_data(self, data, id):
         if data.shape[0] == 0:
             return None
         sql_line = """INSERT INTO STOCK VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"""
@@ -68,6 +228,23 @@ class MySQLUtils(DBBase):
                 # print e
                 # print 'already in the database'
         self.db.commit()
+
+    def insert_feature_data(self, data, id):
+        if isinstance(data, np.ndarray):
+            pass
+        if isinstance(data, pd.DataFrame):
+            data = data.values
+        if data.shape[0] == 0:
+            return None
+
+        sql_line = '''insert into stock_with_feature values('{id}', '{date}', {data} )'''
+        for d in data:
+            try:
+                data_str = ','.join(data[1:])
+                line = sql_line.format(id=id, date=d[0], data=data_str)
+                self.cur.execute(line)
+            except MySQLdb.Error as e:
+                pass
 
     def insert_single_data(self, data):
         '''

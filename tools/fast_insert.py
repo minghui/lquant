@@ -22,7 +22,7 @@ def insert_data(parameter):
         m = pattern.findall(stock)
         if len(m) == 1:
         # print data
-            db.insert_data(data, m[0])
+            db.insert_ohlc_data(data, m[0])
 
 
 def build_stock_list(data_path):
