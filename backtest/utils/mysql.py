@@ -14,6 +14,33 @@ from backtest.utils.dbbase import DBBase
 from data.ohlc import OHLCVD
 
 
+FEATURE_NAME = ["ID", "DD", "START", "HIGH", "LOW", "CLOSE", "VOLUME", "DEAL", "ATR", "NATR",
+                "TRANGE", "DEMA", "EMA", "HT_TRENDLINE", "KAMA", "MA", "MIDPOINT", "MIDPRICE",
+                "SAR", "SAREXT", "SMA", "T3", "TEMA", "TRIMA", "WMA", "BETA", "CORREL", "LINEARREG",
+                "LINEARREG_ANGLE", "LINEARREG_INTERCEPT", "LINEARREG_SLOPE", "STDDEV", "TSF", "VAR",
+                "ADX", "ADXR", "APO", "AROONOSC", "BOP", "CCI", "CMO", "DX", "MFI", "MINUS_DI",
+                "MINUS_DM", "MOM", "PLUS_DI", "PLUS_DM", "PPO", "ROC", "ROCP", "ROCR", "ROCR100",
+                "RSI", "TRIX", "ULTOSC", "WILLR", "CDL2CROWS", "CDL3BLACKCROWS", "CDL3INSIDE",
+                "CDL3LINESTRIKE", "CDL3OUTSIDE", "CDL3STARSINSOUTH", "CDL3WHITESOLDIERS",
+                "CDLABANDONEDBABY", "CDLADVANCEBLOCK", "CDLBELTHOLD", "CDLBREAKAWAY",
+                "CDLCLOSINGMARUBOZU", "CDLCONCEALBABYSWALL", "CDLCOUNTERATTACK",
+                "CDLDARKCLOUDCOVER", "CDLDOJI", "CDLDOJISTAR", "CDLDRAGONFLYDOJI", "CDLENGULFING",
+                "CDLEVENINGDOJISTAR", "CDLEVENINGSTAR", "CDLGAPSIDESIDEWHITE", "CDLGRAVESTONEDOJI",
+                "CDLHAMMER", "CDLHANGINGMAN", "CDLHARAMI", "CDLHARAMICROSS", "CDLHIGHWAVE",
+                "CDLHIKKAKE", "CDLHIKKAKEMOD", "CDLHOMINGPIGEON", "CDLIDENTICAL3CROWS", "CDLINNECK",
+                "CDLINVERTEDHAMMER", "CDLKICKING", "CDLKICKINGBYLENGTH", "CDLLADDERBOTTOM",
+                "CDLLONGLEGGEDDOJI", "CDLLONGLINE", "CDLMARUBOZU", "CDLMATCHINGLOW", "CDLMATHOLD",
+                "CDLMORNINGDOJISTAR", "CDLMORNINGSTAR", "CDLONNECK", "CDLPIERCING",
+                "CDLRICKSHAWMAN", "CDLRISEFALL3METHODS", "CDLSEPARATINGLINES", "CDLSHOOTINGSTAR",
+                "CDLSHORTLINE", "CDLSPINNINGTOP", "CDLSTALLEDPATTERN", "CDLSTICKSANDWICH",
+                "CDLTAKURI", "CDLTASUKIGAP", "CDLTHRUSTING", "CDLTRISTAR", "CDLUNIQUE3RIVER",
+                "CDLUPSIDEGAP2CROWS", "CDLXSIDEGAP3METHODS", "AD", "ADOSC", "OBV", "MAX",
+                "MAXINDEX", "MIN", "MININDEX", "MULT", "SUB", "SUM", "ACOS", "ASIN", "ATAN", "CEIL",
+                "COS", "COSH", "EXP", "FLOOR", "LN", "LOG10", "SIN", "SINH", "SQRT", "TAN", "TANH",
+                "AVGPRICE", "MEDPRICE", "TYPPRICE", "WCLPRICE", "HT_DCPERIOD", "HT_DCPHASE",
+                "HT_TRENDMODE"]
+
+
 def rec_sql(data, headers=None):
     if headers == None:
         headers = [('date', datetime.date), ('open', float), ('high', float),
@@ -56,7 +83,7 @@ class MySQLUtils(DBBase):
 
     def create_feature_db(self, database_name):
         sql_line = """
-        DROP TABLE IF EXISTS {dababase_name};
+        DROP TABLE IF EXISTS {database_name};
 CREATE TABLE IF NOT EXISTS {database_name}(
      ID VARCHAR(20),
   DD DATE,
@@ -208,9 +235,10 @@ CREATE TABLE IF NOT EXISTS {database_name}(
     HT_DCPERIOD FLOAT,
     HT_DCPHASE FLOAT,
     HT_TRENDMODE FLOAT
-)
-        """.format(database_name=database_name)
+)""".format(database_name=database_name)
         self.cur.execute(sql_line)
+        self.cur.close()
+        self.cur = self.db.cursor()
         self.cur.execute("alter table {source} add unique index(ID, DD)".format(source=database_name))
         self.db.commit()
 
@@ -224,12 +252,12 @@ CREATE TABLE IF NOT EXISTS {database_name}(
                                             d[2], d[3], d[4], np.log(d[5]),
                                             np.log(d[6])))
             except MySQLdb.Error as e:
-                pass
+                print e.message
                 # print e
                 # print 'already in the database'
         self.db.commit()
 
-    def insert_feature_data(self, data, id):
+    def insert_feature_data(self, database_name, data, id):
         if isinstance(data, np.ndarray):
             pass
         if isinstance(data, pd.DataFrame):
@@ -237,14 +265,17 @@ CREATE TABLE IF NOT EXISTS {database_name}(
         if data.shape[0] == 0:
             return None
 
-        sql_line = '''insert into stock_with_feature values('{id}', '{date}', {data} )'''
+        sql_line = '''insert into %s values('{id}', '{date}', {data} )''' % (database_name, )
         for d in data:
             try:
-                data_str = ','.join(data[1:])
+                data_str = ','.join([str(x) for x in d[1:]])
                 line = sql_line.format(id=id, date=d[0], data=data_str)
                 self.cur.execute(line)
+                # self.cur.close()
+                # self.cur = self.db.cursor()
             except MySQLdb.Error as e:
-                pass
+                print 'fuck'
+        self.db.commit()
 
     def insert_single_data(self, data):
         '''

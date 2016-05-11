@@ -32,10 +32,15 @@ def prepare_data(db, stock_list, begin, end):
 
 
 if __name__ == '__main__':
-    db = MySQLUtils('root', '1988', 'test', 'stock')
-    stock_list = db.get_all_stock()
-    print stock_list
-    prepare_data(db, stock_list, begin='2011-01-01', end='2015-12-31')
+    db = MySQLUtils('root', '1988', 'stock', 'stock_with_feature')
+    import pandas as pd
+    data = pd.read_csv('d:/stock/new-data/sh600741.txt', sep='\t')
+    result = OHLCVD(data.values)
+    result.add_all_ta_feature()
+    result = result.data_frame.replace(np.nan, -1.0).replace(np.inf, -2.0).replace(-np.inf, -3.0)
+    db_name = "stock_with_feature"
+    db.create_feature_db(db_name)
+    db.insert_feature_data(db_name, result.values, 'sh600741')
     # result = db.get_array('sh600741', begin='2007-10-10', end='2015-12-12')
     # ohlc = OHLCVD(data=result)
     # ohlc.add_macd()
