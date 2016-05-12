@@ -235,7 +235,7 @@ class OHLCVD(object):
             'close': self.data_frame.close.values.astype(np.float64),
             'volume': self.data_frame.volume.values.astype(np.float64)
         }
-        print 'self.data.shape is :', self.data.shape
+        # print 'self.data.shape is :', self.data.shape
         tmp = talib.abstract.RSI(inputs, timeperiod=6)
 
         tmp = tmp.reshape((tmp.shape[0], 1))
@@ -291,7 +291,7 @@ class OHLCVD(object):
         pass
 
     def _add_new_feature(self, data, columns):
-        print self.data.shape
+        # print self.data.shape
         self.data = np.hstack((self.data, data))
         if isinstance(columns, list):
             self.columns = self.columns + columns

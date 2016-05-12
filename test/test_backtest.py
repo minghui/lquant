@@ -27,9 +27,10 @@ class mystrategy(StrategyBase):
 
 
 def analysis(context):
-    for x in context:
-        context[x]["return"].plot()
-        plt.show()
+    pass
+    # for x in context:
+    #     context[x]["return"].plot()
+    #     plt.show()
 
 
 class CountStrategy(StrategyBase):
