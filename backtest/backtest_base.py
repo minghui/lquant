@@ -139,6 +139,7 @@ class BackTestBase(object):
                 self.test_low_freq(stock, day)
                 self._account.get_cash()
                 asset_array.append(self._account.get_cash())
+            # TODO: Add more detail about the transaction.
             data = pd.DataFrame(data=asset_array, index=work_days)
             if self._analysis is not None:
                 self._analysis(data)
