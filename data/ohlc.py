@@ -47,6 +47,8 @@ USABLE_FUNCTION = ['ATR', 'NATR', 'TRANGE', 'DEMA', 'EMA', 'HT_TRENDLINE', 'KAMA
 class OHLCVD(object):
 
     def __init__(self, data):
+        self._header = ["date", "open", "high", "low", "close", "volume",
+                        "deal"]
         if isinstance(data, np.ndarray):
             self.data = data
             self.data_frame = pd.DataFrame(data=data,
